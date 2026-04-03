@@ -6,7 +6,6 @@ Route::get('/', function () {
     return view('app');
 });
 
-
 Route::get('/menu', function () {
     return response()->json([
         [

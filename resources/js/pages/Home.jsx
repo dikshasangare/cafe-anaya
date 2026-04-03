@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Body from "../components/Body";
 import HeroCarousel from "../components/HeroCarousel";
-import { motion, useAnimation, useInView } from "framer-motion";
+import {
+    AnimatePresence,
+    motion,
+    useAnimation,
+    useInView,
+} from "framer-motion";
 import {
     Leaf,
     Plus,
@@ -9,24 +14,44 @@ import {
     MapPin,
     Instagram,
     ArrowRight,
-    Sun,
-    Moon,
-    Globe,
     Wind,
     Droplets,
-    Zap,
+    Phone,
+    Mail,
+    X,
 } from "lucide-react";
+import ImageGallery from "../components/ImageGallery";
 
 export default function Home() {
+    // --- 1. STATE MANAGEMENT ---
     const [scrollY, setScrollY] = useState(0);
+    const [loading, setLoading] = useState(true);
 
+    // Modal States
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isStickyModalOpen, setIsStickyModalOpen] = useState(false);
+    const [stickyItem, setStickyItem] = useState(null);
+
+    // Menu & Category States
+    const [menu, setMenu] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [activeTab, setActiveTab] = useState("");
+    const [hoveredImage, setHoveredImage] = useState(null);
+
+    // Derived State
+    const currentCategoryName =
+        categories.find((c) => String(c.id) === String(activeTab))?.name ||
+        "The Gastronomy";
+
+    // --- 2. REFS & ANIMATION CONTROLS ---
+    // General Scroll Tracking
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // about us animation
+    // About Us Animation
     const ref = useRef(null);
     const isInView = useInView(ref, { amount: 0.5 });
     const controls = useAnimation();
@@ -35,23 +60,11 @@ export default function Home() {
         if (isInView) {
             controls.start("visible");
         } else {
-            controls.start("hidden"); // reverse on scroll up
+            controls.start("hidden");
         }
     }, [isInView, controls]);
 
-    const wordAnim = {
-        hidden: { opacity: 0, y: 40 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.6,
-                ease: "easeOut",
-            },
-        },
-    };
-
-    // why choose us animation
+    // Why Choose Us Animation
     const ref2 = useRef(null);
     const isInView2 = useInView(ref2, { amount: 0.5 });
     const controls2 = useAnimation();
@@ -64,67 +77,95 @@ export default function Home() {
         }
     }, [isInView2, controls2]);
 
-    const [menu, setMenu] = useState([]);
+    // Animation Variants
+    const wordAnim = {
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: "easeOut",
+            },
+        },
+    };
 
+    // --- 3. API & DATA FETCHING ---
+    // API 1: Fetch Categories on Mount
     useEffect(() => {
-        fetch("http://localhost:8000/menu")
+        fetch("http://cafe-anaya.test/api/categories")
             .then((res) => res.json())
-            .then((data) => setMenu(data))
-            .catch(() =>
-                setMenu([
-                    {
-                        name: "Truffle Tagliolini",
-                        price: "850",
-                        category: "plates",
-                        desc: "Hand-rolled pasta, winter truffle, 24-month parmigiano.",
-                    },
-                    {
-                        name: "Kyoto Matcha Cold Foam",
-                        price: "450",
-                        category: "beverage",
-                        desc: "Ceremonial grade whisked over nitro-infused milk.",
-                    },
-                    {
-                        name: "Saffron Burrata",
-                        price: "620",
-                        category: "plates",
-                        desc: "Heirloom tomatoes, saffron oil, toasted sourdough.",
-                    },
-                    {
-                        name: "Hibiscus & Rose Elixir",
-                        price: "380",
-                        category: "botanical",
-                        desc: "Cold-pressed botanicals, sparkling mineral water.",
-                    },
-                ]),
-            );
+            .then((data) => {
+                if (Array.isArray(data) && data.length > 0) {
+                    setCategories(data);
+                    console.log(data);
+                    setActiveTab(data[0].id);
+                }
+            })
+            .catch((err) => console.error("Category API Error:", err));
     }, []);
 
-    const SectionTitle = ({ subtitle, title, dark = false }) => (
-        <div className="mb-16">
-            <motion.span
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className={`font-medium tracking-[0.3em] uppercase text-xs ${dark ? "text-amber-500" : "text-amber-700"}`}
-            >
-                {subtitle}
-            </motion.span>
-            <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className={`text-4xl md:text-6xl font-serif font-bold mt-4 ${dark ? "text-white" : "text-stone-900"}`}
-            >
-                {title}
-            </motion.h2>
-        </div>
+    // API 2: Fetch Menu whenever activeTab changes
+    useEffect(() => {
+        if (activeTab === null || activeTab === undefined) return;
+
+        console.log("Fetching menu for Category ID:", activeTab);
+        setLoading(true);
+
+        fetch(`http://cafe-anaya.test/api/menu?category_id=${activeTab}`)
+            .then((res) => {
+                if (!res.ok) throw new Error("Network response was not ok");
+                return res.json();
+            })
+            .then((data) => {
+                console.log("New Menu Data:", data);
+                const menuData = Array.isArray(data) ? data : [];
+                setMenu(menuData);
+
+                if (data.length > 0) {
+                    setHoveredImage(data[0].image_url);
+                }
+
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Fetch error:", err);
+                setLoading(false);
+            });
+    }, [activeTab]);
+
+    // --- 4. FUNCTIONS & HELPER COMPONENTS ---
+    const openStickyDetails = () => {
+        const item = menu.find((i) => i.image_url === hoveredImage);
+        if (item) {
+            setStickyItem(item);
+            setIsStickyModalOpen(true);
+        }
+    };
+
+    const filteredMenu = menu.filter(
+        (item) => String(item.category_id) === String(activeTab),
     );
 
+
+
+
+      const galleryItems = [
+        { id: 1, src: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070", title: "Mixology Art", size: "col-span-2 row-span-2" },
+        { id: 2, src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974", title: "Culinary Precision", size: "col-span-1 row-span-1" },
+        { id: 3, src: "https://images.unsplash.com/photo-1550966842-30cae010830f?q=80&w=2070", title: "Ambient Glow", size: "col-span-1 row-span-2" },
+        { id: 4, src: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070", title: "Golden Hour", size: "col-span-1 row-span-1" },
+        { id: 5, src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070", title: "Private Dining", size: "col-span-2 row-span-1" },
+    ];
+
+
+    
     return (
         <Body>
             <div className="relative">
                 <HeroCarousel />
                 {/* about us  */}
-                <section className="relative w-full">
+                <section id="about" className="relative w-full">
                     <div className="grid grid-cols-1 md:grid-cols-2 items-center relative">
                         {/* LEFT SIDE  */}
                         <div className="bg-white px-6 md:px-12 py-10 md:py-10">
@@ -259,7 +300,7 @@ export default function Home() {
                 </section>
                 {/* about us end */}
 
-                {/* SECTION 6: THE PHILOSOPHY OF ELEMENTS */}
+                {/* THE PHILOSOPHY OF ELEMENTS */}
                 <section className="py-40 px-6 md:px-24 bg-[#050505] text-white">
                     <div className="max-w-7xl mx-auto">
                         <div className="flex flex-col md:flex-row gap-20 items-start">
@@ -495,254 +536,476 @@ export default function Home() {
                         viewport={{ once: false }}
                         className="absolute right-10 bottom-36 w-28 h-28 bg-cyan-500 rounded-full shadow-xl flex items-center justify-center"
                     >
-                        <span className="text-white text-xl font-normal">
+                        <a
+                            href="{{ route('aboutus') }}"
+                            className="text-white text-xl font-normal"
+                        >
                             Our Café
-                        </span>
+                        </a>
                     </motion.div>
                 </section>
                 {/* our story end */}
 
-                {/* Features - Minimalist Glass Cards */}
+                {/* menu */}
+                <section
+                    id="menu"
+                    className="min-h-screen bg-[#0f0f0f] text-white py-20 px-6"
+                >
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        className="space-y-6 pb-8 border-b border-white/10"
+                    >
+                        <span className="text-[10px] tracking-[0.4em] uppercase text-cyan-500 font-bold border-l border-cyan-500 pl-4">
+                            {currentCategoryName}
+                        </span>
+                        <h2 className="text-6xl md:text-7xl font-serif italic tracking-tighter">
+                            Chef's{" "}
+                            <span className="text-stone-500 italic">
+                                Signature
+                            </span>
+                        </h2>
+                    </motion.div>
 
-                <section className="bg-[#050505] text-white">
-                    {/* SECTION 8: THE PRIVATE ATELIER (IMMERSIVE) */}
-                    <section className="py-40 px-6 md:px-24">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-                            <div className="relative overflow-hidden aspect-[4/5] bg-stone-900">
+                    <div className="max-w-7xl mt-14 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                        {/* LEFT SIDE: STICKY VISUAL */}
+                        <div className="hidden lg:block sticky top-24 h-[70vh] overflow-hidden rounded-3xl border-t border-cyan-700 bg-stone-900 group/sticky">
+                            <AnimatePresence mode="wait">
                                 <motion.img
-                                    initial={{ scale: 1.2 }}
-                                    whileInView={{ scale: 1 }}
-                                    transition={{ duration: 2 }}
-                                    src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80"
-                                    className="w-full h-full object-cover opacity-50 hover:opacity-100 transition-all duration-1000"
+                                    key={hoveredImage}
+                                    src={hoveredImage}
+                                    initial={{ opacity: 0, scale: 1.1 }}
+                                    animate={{ opacity: 0.7, scale: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.6 }}
+                                    className="w-full h-full object-cover border border-cyan-700 transition-all duration-700 group-hover/sticky:opacity-40 group-hover/sticky:scale-105"
                                 />
-                                <div className="absolute top-10 right-10 text-right">
-                                    <span className="text-[10px] text-cyan-500 tracking-[0.5em] block mb-2 font-bold uppercase">
-                                        The Studio
-                                    </span>
-                                    <h3 className="text-4xl font-serif italic text-white/40">
-                                        Private <br /> Tasting
-                                    </h3>
-                                </div>
-                            </div>
-                            <div className="space-y-12">
-                                <Zap
-                                    className="text-cyan-500"
-                                    size={40}
-                                    strokeWidth={1}
-                                />
+                            </AnimatePresence>
 
-                                <div className="z-10 max-w-5xl">
-                                    <motion.h1
-                                        initial={{ y: 40, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{
-                                            duration: 1.2,
-                                            ease: [0.22, 1, 0.36, 1],
-                                        }}
-                                        className="text-[10vw] md:text-[7vw] leading-[0.85] font-serif italic text-white"
-                                    >
-                                        Anaya <br />{" "}
-                                        <span className="ml-[5vw] text-cyan-500">
-                                            Collective.
-                                        </span>
-                                    </motion.h1>
-                                </div>
+                            {/* OVERLAY BUTTON: Only shows when a dish is being hovered */}
 
-                                {/* <h2 className="text-5xl md:text-8xl font-serif leading-tight">Collective <br /> <span className="text-cyan-500 italic">Narrative.</span></h2> */}
-                                {/* <p className="text-lg text-stone-400 leading-relaxed max-w-md font-light italic">
-                                    "Our atelier is more than a cafe. It is a curated stage for culinary performance, where dawn beverages transition into midnight elixirs."
+                            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent" />
+
+                            <div className="absolute bottom-12 left-12 right-12 flex flex-col items-start">
+                                {/* Label */}
+                                <p className="text-cyan-300 font-bold text-[10px] tracking-[0.4em] uppercase mb-2">
+                                    Selected Dish
                                 </p>
-                                <button className="text-[10px] uppercase tracking-[0.6em] text-cyan-400 border-b border-cyan-500/40 pb-2 hover:tracking-[0.8em] transition-all">
-                                    Request Access <ArrowUpRight className="inline ml-4" size={16} />
-                                </button> */}
 
-                                {/* 2. MULTI-SENSORY CONTENT (FOOD, BEV, VIBE) */}
-                                <div className="px-6 grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
-                                    <div className="space-y-6">
-                                        <Sun
-                                            size={20}
-                                            strokeWidth={1}
-                                            className="text-cyan-500"
-                                        />
-                                        <h3 className="text-xl font-serif italic text-white">
-                                            The Kitchen
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-cyan-500">
-                                            Beyond the bean. Our culinary
-                                            program focuses on hyper-seasonal
-                                            small plates—where Mediterranean
-                                            technique meets local farm sourcing.
-                                        </p>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <Moon
-                                            size={20}
-                                            strokeWidth={1}
-                                            className="text-cyan-500"
-                                        />
-                                        <h3 className="text-xl font-serif italic text-white">
-                                            The Lounge
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-cyan-500">
-                                            A sanctuary of sound and light.
-                                            Designed with acoustic timber and
-                                            soft-glow lighting to facilitate
-                                            deep work or quiet intimacy.
-                                        </p>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <Globe
-                                            size={20}
-                                            strokeWidth={1}
-                                            className="text-cyan-500"
-                                        />
-                                        <h3 className="text-xl font-serif italic text-white">
-                                            The Apothecary
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-cyan-500">
-                                            Our beverage lab explores fermented
-                                            tonics, botanical elixirs, and rare
-                                            teas that transition from dawn to
-                                            dusk.
-                                        </p>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <Globe
-                                            size={20}
-                                            strokeWidth={1}
-                                            className="text-cyan-500"
-                                        />
-                                        <h3 className="text-xl font-serif italic text-white">
-                                            The Apothecary
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-cyan-500">
-                                            Our beverage lab explores fermented
-                                            tonics, botanical elixirs, and rare
-                                            teas that transition from dawn to
-                                            dusk.
-                                        </p>
-                                    </div>
+                                {/* Dynamic Name */}
+                                <h2 className="text-5xl font-serif italic text-white/95 mb-8 tracking-tighter">
+                                    {menu.find(
+                                        (i) => i.image_url === hoveredImage,
+                                    )?.name || "Visual Gastronomy"}
+                                </h2>
+
+                                {/* THE BUTTON: Shows on hover, slides up slightly */}
+                                <div className="opacity-0 translate-y-4 group-hover/sticky:opacity-100 group-hover/sticky:translate-y-0 transition-all duration-500 ease-out">
+                                    <button
+                                        onClick={openStickyDetails}
+                                        className="text-[10px] uppercase tracking-[0.3em] border border-cyan-500 text-cyan-500 px-8 py-4 hover:bg-cyan-500 hover:text-white transition-all duration-300 backdrop-blur-sm"
+                                    >
+                                        Explore Dish
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </section>
-                </section>
 
-                {/* 4. THE MENU (Modern Grid) */}
-                <section className="py-32 px-6 bg-[#f4f2ee]">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
-                            <SectionTitle
-                                subtitle="Curated Menu"
-                                title="Chef's Signature Selection"
-                            />
-                            <div className="flex gap-2 pb-4">
-                                {["Coffee", "Breakfast", "Desserts"].map(
-                                    (tab) => (
-                                        <button
-                                            key={tab}
-                                            className="px-6 py-2 rounded-full border border-stone-300 text-sm font-medium hover:bg-stone-900 hover:text-white transition-all"
-                                        >
-                                            {tab}
-                                        </button>
-                                    ),
-                                )}
+                        {/* RIGHT SIDE: SCROLLABLE CONTENT */}
+                        <div className="flex flex-col">
+                            {/* Vertical Category Selector */}
+                            <div className="flex gap-6 mb-16 overflow-x-auto pb-4 no-scrollbar border-b border-white/10">
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat.id}
+                                        // Force the activeTab to be the same type as cat.id
+                                        onClick={() => {
+                                            console.log(
+                                                "Category Clicked:",
+                                                cat.id,
+                                            );
+                                            setActiveTab(cat.id);
+                                        }}
+                                        className={`text-[11px] uppercase tracking-[0.4em] whitespace-nowrap transition-all pb-2 border-b-2 ${
+                                            // Use == instead of === if one is a string and one is a number
+                                            activeTab == cat.id
+                                                ? "text-cyan-500 border-cyan-500"
+                                                : "text-stone-600 border-transparent hover:text-stone-300"
+                                        }`}
+                                    >
+                                        {cat.name}
+                                    </button>
+                                ))}
                             </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                            {menu.slice(0, 6).map((item, index) => (
-                                <motion.div
-                                    key={item.id || index}
-                                    initial={{ opacity: 0, y: 40 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    className="group relative"
-                                >
-                                    <div className="relative h-96 overflow-hidden rounded-[2.5rem] bg-stone-200 shadow-lg">
-                                        <img
-                                            src={item.image}
-                                            alt={item.name}
-                                            className="h-full w-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-white">
-                                            <p className="text-sm text-amber-400 mb-2 font-medium italic">
-                                                Available till 6 PM
+                            {/* Elegant List Items */}
+                            <div className="space-y-0">
+                                {filteredMenu.map((item) => (
+                                    <motion.div
+                                        key={item.id}
+                                        onMouseEnter={() =>
+                                            setHoveredImage(item.image_url)
+                                        }
+                                        className="group border-b border-white/5 py-8 flex justify-between items-center cursor-crosshair transition-all hover:pl-4"
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-4 mb-1">
+                                                <span className="text-[10px] font-mono text-stone-600 group-hover:text-cyan-500 transition-colors">
+                                                    {item.id < 10
+                                                        ? `0${item.id}`
+                                                        : item.id}
+                                                </span>
+                                                <h3 className="text-2xl md:text-3xl font-serif group-hover:italic transition-all">
+                                                    {item.name}
+                                                </h3>
+                                            </div>
+                                            <p className="text-stone-500 text-sm line-clamp-1 italic font-light pr-10">
+                                                {item.description}
                                             </p>
-                                            <button className="bg-white text-stone-900 py-3 rounded-full font-bold flex items-center justify-center gap-2">
-                                                Add to Order <Plus size={18} />
+                                        </div>
+
+                                        <div className="text-right">
+                                            <p className="text-xl font-light tracking-tighter mb-2">
+                                                ₹{item.price}
+                                            </p>
+                                            <button className="text-[9px] uppercase tracking-widest text-cyan-600 opacity-0 group-hover:opacity-100 transition-all border border-cyan-600/30 px-3 py-1 rounded-full">
+                                                Order
                                             </button>
                                         </div>
-                                    </div>
-                                    <div className="mt-6 flex justify-between items-start px-2">
-                                        <div>
-                                            <h3 className="text-2xl font-serif font-bold text-stone-900">
-                                                {item.name}
-                                            </h3>
-                                            <div className="flex items-center gap-1 text-amber-600 mt-1">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <Star
-                                                        key={i}
-                                                        size={14}
-                                                        fill="currentColor"
-                                                    />
-                                                ))}
-                                                <span className="text-stone-400 text-xs ml-2">
-                                                    (120+ Reviews)
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <span className="text-xl font-bold text-stone-900">
-                                            ₹{item.price}
-                                        </span>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            <div className="mt-20 opacity-50 text-cyan-600 hover:opacity-100 transition-opacity">
+                                <button className="text-xs uppercase tracking-[0.5em] border-b border-cyan-600 pb-2">
+                                    View Full Menu
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                {/* 5. VISUAL SOCIAL GRID */}
-                <section className="pb-24 px-6">
+                    <AnimatePresence>
+                        {isStickyModalOpen && stickyItem && (
+                            <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-10">
+                                {/* Backdrop for THIS modal only */}
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setIsStickyModalOpen(false)}
+                                    className="absolute inset-0 bg-black/95 backdrop-blur-md"
+                                />
+
+                                {/* Modal Content */}
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    className="relative bg-stone-900 w-full max-w-5xl h-fit max-h-[90vh] overflow-hidden rounded-sm grid md:grid-cols-2 border border-white/10"
+                                >
+                                    <div className="relative h-64 md:h-full overflow-hidden">
+                                        <img
+                                            src={stickyItem.image_url}
+                                            className="w-full h-full object-cover"
+                                            alt=""
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-r from-stone-900/50 to-transparent" />
+                                    </div>
+
+                                    <div className="p-8 md:p-16 flex flex-col justify-center bg-stone-900">
+                                        <button
+                                            onClick={() =>
+                                                setIsStickyModalOpen(false)
+                                            }
+                                            className="absolute top-8 right-8 text-stone-500 hover:text-white transition-colors"
+                                        >
+                                            <X size={20} />
+                                        </button>
+
+                                        <span className="text-cyan-500 font-mono text-[10px] tracking-[0.4em] uppercase mb-4">
+                                            Chef's Signature
+                                        </span>
+                                        <h2 className="text-5xl font-serif italic text-white mb-6 leading-tight">
+                                            {stickyItem.name}
+                                        </h2>
+                                        <p className="text-stone-400 font-light leading-relaxed mb-10 italic border-l border-cyan-800 pl-6">
+                                            {stickyItem.description}
+                                        </p>
+
+                                        <div className="flex justify-between items-baseline border-t border-white/5 pt-8">
+                                            <span className="text-4xl font-light text-white tracking-tighter">
+                                                ₹{stickyItem.price}
+                                            </span>
+                                            <span className="text-[10px] text-stone-500 uppercase tracking-widest">
+                                                Available for Dining
+                                            </span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+                </section>
+                {/* menu end */}
+
+
+
+
+
+
+
+
+
+
+
+
+                 <section className="bg-[#0a0a0a] py-24 px-6 overflow-hidden">
+            <div className="max-w-7xl mx-auto">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div className="space-y-4">
+                        <span className="text-cyan-500 font-mono text-[10px] tracking-[0.5em] uppercase block">
+                            Curated Atmosphere
+                        </span>
+                        <h2 className="text-6xl md:text-8xl font-serif italic text-white leading-none tracking-tighter">
+                            The <span className="text-stone-600">Visual</span> <br /> Manifesto
+                        </h2>
+                    </div>
+                    <p className="max-w-xs text-stone-500 text-sm italic font-light leading-relaxed border-l border-stone-800 pl-6">
+                        A collection of moments captured in the pursuit of gastronomic perfection and architectural elegance.
+                    </p>
+                </div>
+
+                {/* Bento-Style Luxury Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-none md:grid-rows-3 gap-4 h-auto md:h-[120vh]">
+                    {galleryItems.map((item, index) => (
+                        <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: index * 0.1 }}
+                            viewport={{ once: true }}
+                            className={`relative group overflow-hidden rounded-sm cursor-none ${item.size}`}
+                        >
+                            {/* Image with subtle hover zoom */}
+                            <motion.img
+                                src={item.src}
+                                alt={item.title}
+                                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110 opacity-70 group-hover:opacity-90"
+                            />
+
+                            {/* Minimalist Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
+                                <span className="text-cyan-400 font-mono text-[9px] tracking-[0.3em] uppercase mb-2">
+                                    Archive 0{item.id}
+                                </span>
+                                <h3 className="text-2xl font-serif italic text-white">
+                                    {item.title}
+                                </h3>
+                            </div>
+                            
+                            {/* Decorative Corner Accent */}
+                            <div className="absolute top-4 right-4 w-8 h-8 border-t border-r border-white/10 group-hover:border-cyan-500/50 transition-colors duration-500" />
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Bottom CTA */}
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    className="mt-16 flex justify-center"
+                >
+                    <button className="group relative px-12 py-5 overflow-hidden border border-stone-800 transition-all hover:border-cyan-900">
+                        <span className="relative z-10 text-[10px] uppercase tracking-[0.6em] text-stone-400 group-hover:text-white transition-colors">
+                            Enter Full Experience
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-950/20 to-transparent -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
+                    </button>
+                </motion.div>
+            </div>
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ImageGallery/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                {/* contact us */}
+                <section id="contact" className="pb-24 px-6 mt-20">
                     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-stone-900 rounded-[2rem] p-10 text-white flex flex-col justify-between aspect-square md:aspect-auto">
+                        {/* FOLLOW THE BREW CARD */}
+                        <div className="bg-stone-900 rounded-[2rem] p-10 text-white flex flex-col justify-between min-h-[450px]">
                             <div>
-                                <Instagram className="mb-6 opacity-50" />
-                                <h3 className="text-3xl font-serif mb-4 uppercase tracking-tighter">
+                                <Instagram className="mb-6 opacity-50 text-cyan-400" />
+                                <h3 className="text-3xl font-serif mb-4 uppercase tracking-tighter leading-tight">
                                     Follow <br /> the Brew
                                 </h3>
-                                <p className="text-stone-400 text-sm">
+                                <p className="text-stone-400 text-sm mb-8">
                                     Join 12k+ coffee lovers on our journey to
-                                    the perfect roast.
+                                    the perfect roast. Get brewing tips, first
+                                    dibs on new beans, and a look behind the
+                                    counter.
                                 </p>
+
+                                {/* Additional Content: Stats/Community info */}
+                                <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-6 mb-4">
+                                    <div>
+                                        <p className="text-xs text-stone-500 uppercase tracking-widest">
+                                            Community
+                                        </p>
+                                        <p className="text-lg font-medium">
+                                            12.4k
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-stone-500 uppercase tracking-widest">
+                                            Updates
+                                        </p>
+                                        <p className="text-lg font-medium">
+                                            Daily
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
+
                             <button className="w-full py-4 border border-white/20 rounded-xl hover:bg-white hover:text-black transition-all font-bold text-xs uppercase tracking-widest">
                                 @cafe_anaya
                             </button>
                         </div>
-                        <div className="md:col-span-2 relative group overflow-hidden rounded-[2rem] min-h-[300px]">
+
+                        {/* VISIT US CARD */}
+                        <div className="md:col-span-2 relative group overflow-hidden rounded-[2rem] min-h-[450px]">
                             <img
                                 src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80"
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                                 alt="Interior"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                            <div className="absolute bottom-10 left-10 text-white">
-                                <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] mb-2 font-bold">
-                                    <MapPin
-                                        size={14}
-                                        className="text-cyan-400"
-                                    />{" "}
-                                    Visit Us
-                                </p>
-                                <h3 className="text-3xl font-serif">
-                                    123 Artisan Alley, Metro City
-                                </h3>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                            <div className="absolute inset-0 p-10 flex flex-col justify-end">
+                                <div className="text-white max-w-md">
+                                    <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] mb-4 font-bold">
+                                        <MapPin
+                                            size={14}
+                                            className="text-cyan-400"
+                                        />
+                                        Find Your Way
+                                    </p>
+                                    <h3 className="text-4xl font-serif mb-4">
+                                        123 Artisan Alley, <br /> Metro City, MC
+                                        90210
+                                    </h3>
+
+                                    {/* Additional Content: Hours & Directions */}
+                                    <div className="flex flex-wrap gap-x-8 gap-y-4 mb-8 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                                        <div>
+                                            <p className="text-cyan-400 text-[10px] uppercase font-bold tracking-widest mb-1">
+                                                Weekdays
+                                            </p>
+                                            <p className="text-sm">
+                                                7:00 AM — 8:00 PM
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-cyan-400 text-[10px] uppercase font-bold tracking-widest mb-1">
+                                                Weekends
+                                            </p>
+                                            <p className="text-sm">
+                                                9:00 AM — 9:00 PM
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button className="bg-white text-black px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-400 transition-colors">
+                                            Get Directions
+                                        </button>
+                                        <button
+                                            onClick={() => setIsModalOpen(true)}
+                                            className="backdrop-blur-md bg-white/10 border border-white/20 text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-colors"
+                                        >
+                                            Call Us
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    {/* MODAL */}
+                    {isModalOpen && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                            <div
+                                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                                onClick={() => setIsModalOpen(false)}
+                            />
+                            <div className="relative bg-stone-900 border border-white/10 w-full max-w-md rounded-[2.5rem] p-8 text-white shadow-2xl">
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10"
+                                >
+                                    <X size={20} />
+                                </button>
+                                <div className="mb-8">
+                                    <h4 className="text-2xl font-serif mb-2">
+                                        Get in touch
+                                    </h4>
+                                    <p className="text-stone-400 text-sm">
+                                        We're here to help with your coffee
+                                        cravings.
+                                    </p>
+                                </div>
+                                <div className="space-y-4">
+                                    <a
+                                        href="tel:+1234567890"
+                                        className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-cyan-400 hover:text-black transition-all"
+                                    >
+                                        <Phone size={20} />
+                                        <span className="font-medium">
+                                            +1 (234) 567-890
+                                        </span>
+                                    </a>
+                                    <a
+                                        href="mailto:hello@cafeanaya.com"
+                                        className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white hover:text-black transition-all"
+                                    >
+                                        <Mail size={20} />
+                                        <span className="font-medium">
+                                            hello@cafeanaya.com
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </section>
+                {/* contact us end  */}
             </div>
         </Body>
     );

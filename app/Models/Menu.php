@@ -27,6 +27,18 @@ class Menu extends Model
         'is_featured' => 'boolean',
     ];
 
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null; // Or a default placeholder URL
+        }
+        
+        // This converts 'photos/my-img.jpg' to 'http://cafe-anaya.test/storage/photos/my-img.jpg'
+        return asset('storage/' . $this->image);
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

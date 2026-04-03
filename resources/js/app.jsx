@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -11,9 +12,8 @@ export default function App() {
     <BrowserRouter>
       <Header />
 
-      {/* Routes: default layout includes Header above and Footer below.
-          For pages that should not show Footer, we render them without Footer */}
       <Routes>
+        {/* Home */}
         <Route
           path="/"
           element={
@@ -24,6 +24,7 @@ export default function App() {
           }
         />
 
+        {/* About */}
         <Route
           path="/about"
           element={
@@ -34,10 +35,7 @@ export default function App() {
           }
         />
 
-        {/* Example: Contact page uses Header but NO Footer */}
-        
-
-        {/* Fallback / 404 route — includes Footer */}
+        {/* 404 */}
         <Route
           path="*"
           element={

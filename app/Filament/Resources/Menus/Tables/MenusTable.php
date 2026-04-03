@@ -27,8 +27,9 @@ class MenusTable
                     ->money()
                     ->sortable(),
                 ImageColumn::make('image'),
-                TextColumn::make('category_id')
-                    ->numeric()
+                TextColumn::make('category.name') 
+                    ->label('Category')          
+                    ->searchable()               
                     ->sortable(),
                 IconColumn::make('is_available')
                     ->boolean(),

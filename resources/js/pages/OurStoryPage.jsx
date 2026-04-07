@@ -12,11 +12,43 @@ import {
 } from "framer-motion";
 import MainLayout from "../Layouts/MainLayout";
 
+/* ===== REALISTIC STEAM ===== */
+function Steam() {
+    return (
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
+            {[...Array(5)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute w-20 h-20 bg-[#f5e6d3]/40 rounded-full blur-3xl"
+                    style={{
+                        left: "50%",
+                        x: `${(i - 2) * 25}px`,
+                    }}
+                    animate={{
+                        y: [-10, -160],
+                        opacity: [0.7, 0],
+                        scale: [0.8, 2],
+                        x: [`${(i - 2) * 25}px`, `${(i - 2) * 40}px`],
+                    }}
+                    transition={{
+                        duration: 3 + i * 0.5,
+                        repeat: Infinity,
+                        delay: i * 0.6,
+                        ease: "easeOut",
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
 export default function OurStoryPage() {
-    const ref = useRef(null);
+    const pageRef = useRef(null);
+    const journeyRef = useRef(null);
+
     // ✅ FIXED scroll timing (Basilico style)
     const { scrollYProgress } = useScroll({
-        target: ref,
+        target: pageRef,
         offset: ["start 80%", "end 20%"],
     });
 
@@ -71,6 +103,42 @@ export default function OurStoryPage() {
         },
     };
 
+    // 🛣 Line animation
+    const { scrollYProgress: journeyProgress } = useScroll({
+        target: journeyRef,
+        offset: ["start 80%", "end 20%"],
+    });
+    const lineProgress = useTransform(journeyProgress, [0, 1], [0, 1]);
+    const journeyBg = useTransform(
+        journeyProgress,
+        [0, 0.5, 1],
+        [
+            "#080808",
+            "#0f172a",
+            "#005F78", // cyan theme
+        ],
+    );
+    const data = [
+        {
+            year: "2014",
+            title: "The First Brew",
+            desc: "It began with a quiet vision — a space where time slows down.",
+            image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+        },
+        {
+            year: "2018",
+            title: "Moments & Memories",
+            desc: "We became more than a café. Conversations and stories filled every corner.",
+            image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
+        },
+        {
+            year: "Today",
+            title: "Refined Experience",
+            desc: "Today, we blend tradition with elegance to create unforgettable moments.",
+            image: "https://images.unsplash.com/photo-1521017432531-fbd92d768814",
+        },
+    ];
+    const glow = useTransform(lineProgress, [0, 1], [0, 25]);
     return (
         <MainLayout>
             <div className="bg-[#080808] text-stone-200 selection:bg-cyan-500/30 selection:text-white">
@@ -116,7 +184,7 @@ export default function OurStoryPage() {
                 </section>
             </div>
             {/* Our Story */}
-            <section ref={ref} className="overflow-hidden">
+            <section ref={pageRef} className="overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2">
                     {/* ================= HERO IMAGE ================= */}
                     <div className="h-[280px] md:h-[600px] overflow-hidden relative">
@@ -287,8 +355,8 @@ export default function OurStoryPage() {
                 </div>
             </section>
 
+            {/* --- CHAPTER 2: THE PHILOSOPHY (Bento Grid) --- */}
             <div className="bg-[#080808] text-stone-200 selection:bg-cyan-500/30 selection:text-white">
-                {/* --- CHAPTER 2: THE PHILOSOPHY (Bento Grid) --- */}
                 <section className="py-32 px-6 md:px-24 max-w-8xl mx-auto">
                     <motion.h3
                         initial={{ opacity: 0, y: 30 }}
@@ -356,6 +424,247 @@ export default function OurStoryPage() {
                     </div>
                 </section>
             </div>
+
+            {/* ================= CHAPTER 4 — STORY GRID ================= */}
+            <section className="py-20 px-6 md:px-16">
+                <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                    {/* TEXT */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1 }}
+                    >
+                        <p className="text-sm tracking-[0.4em] uppercase text-cyan-500 mb-4">
+                            Our Philosophy
+                        </p>
+
+                        <h2 className="text-3xl md:text-5xl font-serif text-gray-800 mb-6 leading-tight">
+                            Crafted with Care,
+                            <span className="text-cyan-500">
+                                {" "}
+                                Served with Heart
+                            </span>
+                        </h2>
+
+                        <p className="text-gray-600 leading-relaxed mb-6">
+                            We believe a café is more than just a place to eat —
+                            it's where stories unfold, ideas are born, and
+                            connections grow naturally.
+                        </p>
+
+                        <p className="text-gray-600 leading-relaxed">
+                            Every detail, from the aroma of freshly brewed
+                            coffee to the warmth of our space, is designed to
+                            make you feel present, comfortable, and inspired.
+                        </p>
+                    </motion.div>
+
+                    {/* IMAGE */}
+                    <motion.img
+                        src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1200"
+                        alt=""
+                        initial={{ opacity: 0, x: 40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1 }}
+                        className="rounded-3xl shadow-xl object-cover"
+                    />
+                </div>
+            </section>
+
+            {/* Our Journey */}
+
+            {/* ===== FIRST SECTION ===== */}
+            <motion.div
+                ref={journeyRef}
+                style={{ backgroundColor: journeyBg }}
+                className="relative text-stone-200 overflow-hidden"
+            >
+                {/* LINE */}
+                {/* <div className="hidden md:block absolute left-1/2 top-0 -translate-x-1/2 w-[2px] h-full bg-white/50">
+                    <motion.div
+                        style={{ height: lineProgress }}
+                        className="w-full bg-gradient-to-b from-cyan-500 via-cyan-400 to-cyan-500"
+                    />
+                    </div> */}
+
+                {/* INTRO */}
+                <section className="py-32 max-w-6xl mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 60 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                    >
+                        <p className="text-xs tracking-[0.6em] uppercase text-cyan-400 mb-4">
+                            Our Journey
+                        </p>
+                        <h2 className="text-4xl md:text-5xl font-semibold text-white">
+                            Crafted Over Time
+                        </h2>
+
+                        <p className="text-gray-400 pt-4">
+                            It all began in 2014 with a simple dream — to create
+                            a place where people could slow down.
+                        </p>
+                    </motion.div>
+                </section>
+            </motion.div>
+
+            {/* ===== JOURNEY SECTION ===== */}
+            <motion.section
+                ref={journeyRef}
+                style={{ backgroundColor: journeyBg }}
+                className="py-40 relative"
+            >
+                {/* CENTER LINE */}
+                <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[2px] h-full">
+                    <motion.div
+                        style={{
+                            scaleY: lineProgress,
+                            transformOrigin: "top",
+                            boxShadow: useMotionTemplate`0px 0px ${glow}px rgba(34,211,238,0.7)`,
+                        }}
+                        className="w-full h-full bg-gradient-to-b from-cyan-500 via-cyan-400 to-cyan-500"
+                    />
+                </div>
+
+                {/* CONTENT */}
+                <div className="max-w-6xl mx-auto space-y-40 px-6 relative">
+                    {data.map((item, index) => {
+                        const isLeft = index % 2 === 0;
+
+                        const cardRef = useRef(null);
+                        const isInView = useInView(cardRef, {
+                            margin: "-40% 0px -40% 0px",
+                        });
+
+                        return (
+                            <motion.div
+                                ref={cardRef}
+                                key={index}
+                                animate={{
+                                    scale: isInView ? 1.02 : 0.96,
+                                    opacity: isInView ? 1 : 0.5,
+                                }}
+                                transition={{ duration: 0.5 }}
+                                className="grid md:grid-cols-2 gap-16 items-center relative"
+                            >
+                                {/* DOT */}
+                                <motion.div
+                                    animate={{
+                                        scale: isInView ? 1.5 : 1,
+                                        backgroundColor: isInView
+                                            ? "#22d3ee"
+                                            : "#444",
+                                        boxShadow: isInView
+                                            ? "0px 0px 20px rgba(34,211,238,0.8)"
+                                            : "none",
+                                    }}
+                                    className="hidden md:block absolute left-1/2 md:-ml-[7px] -translate-x-1/2 w-4 h-4 rounded-full z-20"
+                                />
+
+                                {/* IMAGE */}
+                                <motion.div
+                                    animate={{
+                                        boxShadow: isInView
+                                            ? "0px 0px 40px rgba(34,211,238,0.25)"
+                                            : "none",
+                                    }}
+                                    className={`relative h-[420px] rounded-3xl overflow-hidden ${
+                                        isLeft
+                                            ? "md:ml-10"
+                                            : "md:order-2 md:mr-10"
+                                    }`}
+                                >
+                                    <img
+                                        src={`${item.image}?auto=format&fit=crop&w=1200&q=80`}
+                                        className="w-full h-full object-cover"
+                                    />
+
+                                    {index === data.length - 1 && <Steam />}
+
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                </motion.div>
+
+                                {/* TEXT */}
+                                <motion.div
+                                    animate={{ y: isInView ? 0 : 20 }}
+                                    className={isLeft ? "md:pr-10" : "md:pl-10"}
+                                >
+                                    <p
+                                        className={`text-sm mb-2 ${
+                                            isInView
+                                                ? "text-cyan-300"
+                                                : "text-cyan-500/60"
+                                        }`}
+                                    >
+                                        {item.year}
+                                    </p>
+
+                                    <h3
+                                        className={`text-3xl font-semibold mb-4 ${
+                                            isInView
+                                                ? "text-white"
+                                                : "text-gray-500"
+                                        }`}
+                                    >
+                                        {item.title}
+                                    </h3>
+
+                                    <p
+                                        className={`${
+                                            isInView
+                                                ? "text-stone-300"
+                                                : "text-gray-600"
+                                        }`}
+                                    >
+                                        {item.desc}
+                                    </p>
+
+                                    <motion.div
+                                        animate={{
+                                            width: isInView ? "80px" : "40px",
+                                            opacity: isInView ? 1 : 0.4,
+                                        }}
+                                        className="mt-6 h-[2px] bg-cyan-400"
+                                    />
+                                </motion.div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            </motion.section>
+            {/* Our Journey end */}
+
+            {/* ================= CHAPTER 6 — FINAL CTA ================= */}
+            <section className="py-24 flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+                {/* glow */}
+                <div className="absolute w-[400px] h-[400px] bg-cyan-200/40 blur-[120px] rounded-full" />
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1 }}
+                    className="relative z-10"
+                >
+                    <h2 className="text-3xl md:text-6xl font-serif text-gray-800 mb-6">
+                        Be Part of Our Story
+                    </h2>
+
+                    <p className="text-gray-600 max-w-xl mb-10">
+                        Step into a space designed for comfort, connection, and
+                        calm. Your story becomes a part of ours with every
+                        visit.
+                    </p>
+
+                    <motion.a
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        href="/"
+                        className="px-8 py-4 rounded-full bg-cyan-500 text-white font-semibold shadow-lg hover:bg-cyan-600 transition"
+                    >
+                        Visit Café
+                    </motion.a>
+                </motion.div>
+            </section>
         </MainLayout>
     );
 }

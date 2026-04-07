@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 // import { useNavigate, useLocation } from "react-router-dom";
-import { router, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { Menu, X } from "lucide-react";
 
 // 👇 Import both logos
@@ -129,9 +129,17 @@ export default function Header() {
 
                 {/* -------- Right Menu -------- */}
                 <nav className="hidden md:flex items-start space-x-8">
+                    <Link
+                        href={"/our-story"}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        Our Story
+                    </Link>
                     {[
                         { name: "About", id: "#about" },
-                        { name: "Blog", id: "#blog" },
+                        // { name: "Blog", id: "#blog" },
                         { name: "Contact", id: "#contact" },
                     ].map((item) => (
                         <button

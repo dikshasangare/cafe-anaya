@@ -21,6 +21,8 @@ import {
     X,
 } from "lucide-react";
 import ImageGallery from "../components/ImageGallery";
+import OurStory from "../components/OurStory";
+import MainLayout from "../Layouts/MainLayout";
 
 export default function Home() {
     // --- 1. STATE MANAGEMENT ---
@@ -147,21 +149,41 @@ export default function Home() {
         (item) => String(item.category_id) === String(activeTab),
     );
 
-
-
-
-      const galleryItems = [
-        { id: 1, src: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070", title: "Mixology Art", size: "col-span-2 row-span-2" },
-        { id: 2, src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974", title: "Culinary Precision", size: "col-span-1 row-span-1" },
-        { id: 3, src: "https://images.unsplash.com/photo-1550966842-30cae010830f?q=80&w=2070", title: "Ambient Glow", size: "col-span-1 row-span-2" },
-        { id: 4, src: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070", title: "Golden Hour", size: "col-span-1 row-span-1" },
-        { id: 5, src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070", title: "Private Dining", size: "col-span-2 row-span-1" },
+    const galleryItems = [
+        {
+            id: 1,
+            src: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070",
+            title: "Mixology Art",
+            size: "col-span-2 row-span-2",
+        },
+        {
+            id: 2,
+            src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974",
+            title: "Culinary Precision",
+            size: "col-span-1 row-span-1",
+        },
+        {
+            id: 3,
+            src: "https://images.unsplash.com/photo-1550966842-30cae010830f?q=80&w=2070",
+            title: "Ambient Glow",
+            size: "col-span-1 row-span-2",
+        },
+        {
+            id: 4,
+            src: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070",
+            title: "Golden Hour",
+            size: "col-span-1 row-span-1",
+        },
+        {
+            id: 5,
+            src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070",
+            title: "Private Dining",
+            size: "col-span-2 row-span-1",
+        },
     ];
 
-
-    
     return (
-        <Body>
+        <MainLayout title="Home">
             <div className="relative">
                 <HeroCarousel />
                 {/* about us  */}
@@ -359,7 +381,7 @@ export default function Home() {
                 </section> */}
 
                 {/* why choose us */}
-                <section className="relative w-full">
+                <section className="relative w-full mb-20">
                     <div className="grid grid-cols-1 md:grid-cols-2 items-center relative">
                         {/* LEFT SIDE  */}
                         <div className="relative flex justify-start items-start">
@@ -373,9 +395,10 @@ export default function Home() {
                                 }}
                                 transition={{
                                     duration: 1.5,
-                                    ease: "easeInOut",
+                                    // ease: "easeInOut",
+                                    ease: [0.22, 1, 0.36, 1],
                                 }}
-                                viewport={{ once: true, amount: 0.3 }}
+                                viewport={{ once: false, amount: 0.3 }}
                                 className="flex justify-center items-center w-full"
                             >
                                 <motion.img
@@ -387,6 +410,7 @@ export default function Home() {
                                     transition={{
                                         duration: 1.2,
                                         ease: "easeOut",
+                                        delay: 0.2,
                                     }}
                                     viewport={{ once: false, amount: 0.3 }}
                                 />
@@ -394,6 +418,8 @@ export default function Home() {
                                 <motion.div
                                     initial={{ x: 40, opacity: 0 }}
                                     whileInView={{ x: 0, opacity: 1 }}
+                                    transition={{ duration: 0.8, delay: 0.8 }}
+                                    viewport={{ once: true }}
                                     className="absolute -bottom-20 -right-0 hidden md:block bg-cyan-600 text-white p-8 rounded-3xl shadow-xl z-20 max-w-[240px]"
                                 >
                                     <p className="text-sm italic opacity-90">
@@ -449,7 +475,7 @@ export default function Home() {
                                             ? { scaleX: 1 }
                                             : { scaleX: 0 }
                                     }
-                                    transition={{ duration: 0.8 }}
+                                    transition={{ duration: 1, delay: 0.8 }}
                                     originX={1}
                                 />
                             </motion.p>
@@ -493,58 +519,6 @@ export default function Home() {
                     </div>
                 </section>
                 {/* why choose us end */}
-
-                {/* our story */}
-                <section
-                    className="relative md:flex items-center justify-center h-[500px] md:h-[500px] bg-center bg-cover bg-black/50 bg-blend-overlay bg-fixed mt-20"
-                    style={{
-                        backgroundImage:
-                            "url('https://images.unsplash.com/photo-1680359871322-aabe6b33eff5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c291dGglMjBpbmRpYW4lMjBmb29kfGVufDB8fDB8fHww')",
-                    }}
-                >
-                    {/* Content */}
-                    <div className="min-h-full h-[600px] md:min-h-screen md:h-[800px] max-w-6xl mx-auto flex flex-col justify-center items-center text-center text-white p-2 md:p-6">
-                        {/* Heading */}
-                        <motion.h1
-                            initial={{ opacity: 0, y: -50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1 }}
-                            viewport={{ once: false }}
-                            className="text-xl md:text-6xl font-bold pb-2 md:pb-5 tracking-widest"
-                        >
-                            Café Anaya
-                        </motion.h1>
-
-                        {/* Tagline */}
-                        <motion.p
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, delay: 0.3 }}
-                            viewport={{ once: false }}
-                            className="text-sm md:text-xl opacity-90 max-w-xl leading-relaxed"
-                        >
-                            Brewing happiness in every cup ☕ — where taste
-                            meets comfort and every visit feels special.
-                        </motion.p>
-                    </div>
-
-                    {/* Animated Circle */}
-                    <motion.div
-                        initial={{ y: -120, opacity: 0 }}
-                        whileInView={{ y: 80, opacity: 1 }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        viewport={{ once: false }}
-                        className="absolute right-10 bottom-36 w-28 h-28 bg-cyan-500 rounded-full shadow-xl flex items-center justify-center"
-                    >
-                        <a
-                            href="{{ route('aboutus') }}"
-                            className="text-white text-xl font-normal"
-                        >
-                            Our Café
-                        </a>
-                    </motion.div>
-                </section>
-                {/* our story end */}
 
                 {/* menu */}
                 <section
@@ -748,113 +722,11 @@ export default function Home() {
                 </section>
                 {/* menu end */}
 
+                <ImageGallery />
 
-
-
-
-
-
-
-
-
-
-
-                 <section className="bg-[#0a0a0a] py-24 px-6 overflow-hidden">
-            <div className="max-w-7xl mx-auto">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-                    <div className="space-y-4">
-                        <span className="text-cyan-500 font-mono text-[10px] tracking-[0.5em] uppercase block">
-                            Curated Atmosphere
-                        </span>
-                        <h2 className="text-6xl md:text-8xl font-serif italic text-white leading-none tracking-tighter">
-                            The <span className="text-stone-600">Visual</span> <br /> Manifesto
-                        </h2>
-                    </div>
-                    <p className="max-w-xs text-stone-500 text-sm italic font-light leading-relaxed border-l border-stone-800 pl-6">
-                        A collection of moments captured in the pursuit of gastronomic perfection and architectural elegance.
-                    </p>
-                </div>
-
-                {/* Bento-Style Luxury Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-none md:grid-rows-3 gap-4 h-auto md:h-[120vh]">
-                    {galleryItems.map((item, index) => (
-                        <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: index * 0.1 }}
-                            viewport={{ once: true }}
-                            className={`relative group overflow-hidden rounded-sm cursor-none ${item.size}`}
-                        >
-                            {/* Image with subtle hover zoom */}
-                            <motion.img
-                                src={item.src}
-                                alt={item.title}
-                                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110 opacity-70 group-hover:opacity-90"
-                            />
-
-                            {/* Minimalist Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
-                                <span className="text-cyan-400 font-mono text-[9px] tracking-[0.3em] uppercase mb-2">
-                                    Archive 0{item.id}
-                                </span>
-                                <h3 className="text-2xl font-serif italic text-white">
-                                    {item.title}
-                                </h3>
-                            </div>
-                            
-                            {/* Decorative Corner Accent */}
-                            <div className="absolute top-4 right-4 w-8 h-8 border-t border-r border-white/10 group-hover:border-cyan-500/50 transition-colors duration-500" />
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Bottom CTA */}
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    className="mt-16 flex justify-center"
-                >
-                    <button className="group relative px-12 py-5 overflow-hidden border border-stone-800 transition-all hover:border-cyan-900">
-                        <span className="relative z-10 text-[10px] uppercase tracking-[0.6em] text-stone-400 group-hover:text-white transition-colors">
-                            Enter Full Experience
-                        </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-950/20 to-transparent -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-                    </button>
-                </motion.div>
-            </div>
-        </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<ImageGallery/>
-
-
-
-
-
-
-
-
-
-
-
-
-
+                {/* our story */}
+                <OurStory />
+                {/* our story end */}
 
                 {/* contact us */}
                 <section id="contact" className="pb-24 px-6 mt-20">
@@ -1007,6 +879,6 @@ export default function Home() {
                 </section>
                 {/* contact us end  */}
             </div>
-        </Body>
+        </MainLayout>
     );
 }

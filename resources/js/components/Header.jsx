@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+// import { useNavigate, useLocation } from "react-router-dom";
+import { router, usePage } from "@inertiajs/react";
 import { Menu, X } from "lucide-react";
 
 // 👇 Import both logos
@@ -9,35 +10,76 @@ import colorLogo from "../../images/color-logo-transparent-png.png";
 export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
+    // const navigate = useNavigate();
+    // const location = useLocation();
+
+    // const handleNavClick = (sectionId) => {
+    //     setMenuOpen(false); // close menu on link click
+
+    //     if (location.pathname === "/") {
+    //         if (sectionId) {
+    //             const section = document.querySelector(sectionId);
+    //             if (section) section.scrollIntoView({ behavior: "smooth" });
+    //         } else {
+    //             window.scrollTo({ top: 0, behavior: "smooth" });
+    //         }
+    //     } else {
+    //         // navigate(sectionId ? `/${sectionId}` : "/");
+    //           router.visit(sectionId ? `/${sectionId}` : "/");
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     if (location.pathname === "/" && location.hash) {
+    //         const section = document.querySelector(location.hash);
+    //         if (section) {
+    //             setTimeout(
+    //                 () => section.scrollIntoView({ behavior: "smooth" }),
+    //                 100
+    //             );
+    //         }
+    //     }
+    // }, [location]);
+
+    // useEffect(() => {
+    //     const handleScroll = () => setScrolled(window.scrollY > 50);
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => window.removeEventListener("scroll", handleScroll);
+    // }, []);
+
+    // In Inertia, we use usePage().url instead of useLocation()
+    const { url } = usePage();
 
     const handleNavClick = (sectionId) => {
-        setMenuOpen(false); // close menu on link click
+        setMenuOpen(false);
 
-        if (location.pathname === "/") {
-            if (sectionId) {
+        // If we are already on the home page, just scroll
+        if (url === "/") {
+            if (sectionId && sectionId.startsWith("#")) {
                 const section = document.querySelector(sectionId);
                 if (section) section.scrollIntoView({ behavior: "smooth" });
             } else {
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
         } else {
-            navigate(sectionId ? `/${sectionId}` : "/");
+            // If we are on another page (like /about), go home first
+            // Inertia handles this with router.visit
+            router.visit(sectionId ? `/${sectionId}` : "/");
         }
     };
 
+    // Smooth scroll handler for when we arrive at Home from another page
     useEffect(() => {
-        if (location.pathname === "/" && location.hash) {
-            const section = document.querySelector(location.hash);
+        if (url === "/" && window.location.hash) {
+            const section = document.querySelector(window.location.hash);
             if (section) {
                 setTimeout(
                     () => section.scrollIntoView({ behavior: "smooth" }),
-                    100
+                    100,
                 );
             }
         }
-    }, [location]);
+    }, [url]);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50);

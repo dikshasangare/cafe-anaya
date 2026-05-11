@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MenuController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,3 +17,16 @@ Route::get('/our-story', function () {
     return Inertia::render('OurStoryPage'); // This looks for OurStoryPage.jsx in resources/js/Pages
 })->name('our-story');
 
+Route::get('/reservations', function () {
+    return Inertia::render('Reservation');
+})->name('reservations');
+
+Route::get('/cafe-gallery', function () {
+    return Inertia::render('CafeGallery');
+})->name('cafe-gallery');
+
+Route::get('/cafe-menus', function () {
+    return Inertia::render('CafeMenu');
+})->name('cafe-menus');
+
+Route::get('/cafe-menu/{slug}', [MenuController::class, 'show']);

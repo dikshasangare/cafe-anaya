@@ -18,7 +18,8 @@ class Menu extends Model
         'is_featured',
         'preparation_time',
         'rating',
-        'tags'
+        'tags',
+        'signature'
     ];
 
     protected $casts = [
@@ -34,7 +35,7 @@ class Menu extends Model
         if (!$this->image) {
             return null; // Or a default placeholder URL
         }
-        
+
         // This converts 'photos/my-img.jpg' to 'http://cafe-anaya.test/storage/photos/my-img.jpg'
         return asset('storage/' . $this->image);
     }
@@ -48,5 +49,4 @@ class Menu extends Model
     {
         return $this->hasMany(MenuImage::class);
     }
-
 }

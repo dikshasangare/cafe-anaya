@@ -18,13 +18,13 @@ class MenuForm
         return $schema
             ->components([
                 Section::make('Product Details')
-                ->description('Manage product information and pricing.')
-                ->schema([
-                   TextInput::make('name')
+                    ->description('Manage product information and pricing.')
+                    ->schema([
+                        TextInput::make('name')
                             ->required()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
-                        
+                            ->afterStateUpdated(fn($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+
                         TextInput::make('slug')
                             ->required()
                             ->unique(ignoreRecord: true),
@@ -39,46 +39,50 @@ class MenuForm
                             ->numeric()
                             ->suffix('mins') // Added a suffix for clarity
                             ->default(null),
-                    // Full width description
-                    Textarea::make('description')
-                        ->rows(3)
-                        ->columnSpanFull(),
+                        // Full width description
+                        Textarea::make('description')
+                            ->rows(3)
+                            ->columnSpanFull(),
 
-                   TextInput::make('price')
-                                ->required()
-                                ->numeric()
-                                ->prefix('$'),
-                            
-                            TextInput::make('discount_price')
-                                ->numeric()
-                                ->prefix('$'),
-                ]),
+                        TextInput::make('price')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$'),
 
-            Section::make('Media & Status')
-                ->schema([
-                    FileUpload::make('image')
-                        ->image()
-                        ->disk('public')
-                        ->imageEditor() // Allows users to crop
-                        ->columnSpanFull(),
+                        TextInput::make('discount_price')
+                            ->numeric()
+                            ->prefix('$'),
+                    ]),
 
-                    Grid::make(2) // 3 items side-by-side on desktop
-                        ->schema([
-                            Toggle::make('is_available')
-                                ->inline(false) // Better look inside grids
-                                ->required(),
-                            Toggle::make('is_featured')
-                                ->inline(false)
-                                ->required(),
-                           
-                        ]),
+                Section::make('Media & Status')
+                    ->schema([
+                        FileUpload::make('image')
+                            ->image()
+                            ->disk('public')
+                            ->imageEditor() // Allows users to crop
+                            ->columnSpanFull(),
 
-                         TextInput::make('rating')
-                                ->required()
-                                ->numeric()
-                                ->default(0),
-                ])
-                ->columns(1), // Stack internal grid items                
+                        Grid::make(2) // 3 items side-by-side on desktop
+                            ->schema([
+                                Toggle::make('is_available')
+                                    ->inline(false) // Better look inside grids
+                                    ->required(),
+                                Toggle::make('is_featured')
+                                    ->inline(false)
+                                    ->required(),
+
+                            ]),
+
+                        Toggle::make('signature')
+                            ->inline(false)
+                            ->required(),
+
+                        TextInput::make('rating')
+                            ->required()
+                            ->numeric()
+                            ->default(0),
+                    ])
+                    ->columns(1), // Stack internal grid items                
             ]);
     }
 }

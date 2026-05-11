@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { Link } from "@inertiajs/react";
+import { ArrowRight } from "lucide-react";
 
 const ImageGallery = () => {
     const targetRef = useRef(null);
@@ -71,6 +73,16 @@ const ImageGallery = () => {
                             A <br /> Series <br />{" "}
                             <span className="text-stone-200">2026</span>
                         </motion.h2>
+
+                        <Link
+                            href={"/cafe-gallery"}
+                            className="mt-10 group inline-flex text-xl items-center gap-2 text-cyan-600 hover:gap-3 transition-all"
+                        >
+                            View Cafe Gallery
+                            <span className="grid h-9 w-9 place-items-center rounded-full border border-cyan-400 group-hover:bg-cyan-600 group-hover:text-cyan-100 transition">
+                                <ArrowRight className="h-4 w-4" />
+                            </span>
+                        </Link>
                     </div>
 
                     {items.map((item) => (

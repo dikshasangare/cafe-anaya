@@ -19,10 +19,19 @@ import {
     Phone,
     Mail,
     X,
+    Coffee,
+    UtensilsCrossed,
+    Music2,
 } from "lucide-react";
 import ImageGallery from "../components/ImageGallery";
 import OurStory from "../components/OurStory";
 import MainLayout from "../Layouts/MainLayout";
+import Reservation from "./Reservation";
+import { Link } from "@inertiajs/react";
+import g3 from "../../images/gallery-3.jpg";
+import dish3 from "../../images/dish-3.jpg";
+import dish2 from "../../images/dish-2.jpg";
+import { Reveal } from "../components/Reveal";
 
 export default function Home() {
     // --- 1. STATE MANAGEMENT ---
@@ -92,16 +101,32 @@ export default function Home() {
         },
     };
 
+    // Three rituals animation
+    const refRituals = useRef(null);
+    const isInViewRituals = useInView(refRituals, { amount: 0.5 });
+    const controlsRituals = useAnimation();
+
+    useEffect(() => {
+        if (isInViewRituals) {
+            controlsRituals.start("visible");
+        } else {
+            controlsRituals.start("hidden");
+        }
+    }, [isInViewRituals, controlsRituals]);
+
     // --- 3. API & DATA FETCHING ---
     // API 1: Fetch Categories on Mount
     useEffect(() => {
-        fetch("http://cafe-anaya.test/api/categories")
+        fetch("http://cafe-anaya.test/api/home-categories")
             .then((res) => res.json())
             .then((data) => {
-                if (Array.isArray(data) && data.length > 0) {
-                    setCategories(data);
-                    console.log(data);
-                    setActiveTab(data[0].id);
+                console.log("Category Response:", data);
+
+                const categoryData = data.categories || [];
+
+                if (categoryData.length > 0) {
+                    setCategories(categoryData);
+                    setActiveTab(categoryData[0].id);
                 }
             })
             .catch((err) => console.error("Category API Error:", err));
@@ -109,23 +134,29 @@ export default function Home() {
 
     // API 2: Fetch Menu whenever activeTab changes
     useEffect(() => {
-        if (activeTab === null || activeTab === undefined) return;
+        if (!activeTab) return;
 
         console.log("Fetching menu for Category ID:", activeTab);
+
         setLoading(true);
 
         fetch(`http://cafe-anaya.test/api/menu?category_id=${activeTab}`)
             .then((res) => {
-                if (!res.ok) throw new Error("Network response was not ok");
+                if (!res.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
                 return res.json();
             })
             .then((data) => {
-                console.log("New Menu Data:", data);
-                const menuData = Array.isArray(data) ? data : [];
+                console.log("Menu Response:", data);
+
+                const menuData = data.menus || [];
+
                 setMenu(menuData);
 
-                if (data.length > 0) {
-                    setHoveredImage(data[0].image_url);
+                if (menuData.length > 0) {
+                    setHoveredImage(menuData[0].image_url);
                 }
 
                 setLoading(false);
@@ -323,50 +354,121 @@ export default function Home() {
                 {/* about us end */}
 
                 {/* THE PHILOSOPHY OF ELEMENTS */}
-                <section className="py-40 px-6 md:px-24 bg-[#050505] text-white">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row gap-20 items-start">
-                            <div className="md:w-1/3">
-                                <h2 className="text-xs uppercase tracking-[0.5em] text-cyan-500 font-bold mb-8 italic">
-                                    Sensory Elements
-                                </h2>
-                                <h3 className="text-5xl md:text-7xl font-serif italic leading-[0.9]">
-                                    The Art of <br /> Transition.
-                                </h3>
-                            </div>
-                            <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
-                                <div className="space-y-4 p-8 border-l border-white/5 hover:border-cyan-500 transition-colors">
-                                    <Wind
-                                        className="text-cyan-500"
-                                        size={32}
-                                        strokeWidth={1}
-                                    />
-                                    <h4 className="text-xl font-medium">
-                                        Aerated Roasts
-                                    </h4>
-                                    <p className="text-sm text-cyan-500 leading-loose">
-                                        Our proprietary air-roasting technology
-                                        preserves the volatile aromatic oils of
-                                        every bean.
-                                    </p>
-                                </div>
-                                <div className="space-y-4 p-8 border-l border-white/5 hover:border-cyan-500 transition-colors">
-                                    <Droplets
-                                        className="text-cyan-500"
-                                        size={32}
-                                        strokeWidth={1}
-                                    />
-                                    <h4 className="text-xl font-medium">
-                                        Mineral Infusion
-                                    </h4>
-                                    <p className="text-sm text-cyan-500 leading-loose">
-                                        Water, restructured through charcoal
-                                        filtration to match the volcanic origin
-                                        of the coffee.
-                                    </p>
-                                </div>
-                            </div>
+
+                {/* CRAFTED TRIO — pillars */}
+                <section className="relative mx-auto max-w-full px-6 py-24 lg:px-10 bg-cyan-50">
+                    <Reveal className="text-center">
+                        <div className="flex items-center justify-center gap-4">
+                            <div className="h-[1px] w-16 bg-cyan-300" />
+
+                            <p className="text-xs uppercase tracking-[0.3em] text-cyan-600">
+                                What we craft
+                            </p>
+
+                            <div className="h-[1px] w-16 bg-cyan-300" />
                         </div>
+
+                        <motion.p
+                            ref={refRituals}
+                            className="capitalize text-gray-600 relative inline-block text-5xl font-bold mb-4"
+                            initial="hidden"
+                            animate={controlsRituals}
+                            variants={{
+                                hidden: {},
+                                visible: {
+                                    transition: {
+                                        staggerChildren: 0.25,
+                                    },
+                                },
+                            }}
+                        >
+                            <div className="mt-5">
+                                <motion.span variants={wordAnim}>
+                                    Three{" "}
+                                </motion.span>
+                                <motion.span variants={wordAnim}>
+                                    rituals,{" "}
+                                </motion.span>
+                                <motion.span
+                                    className="text-cyan-500"
+                                    variants={wordAnim}
+                                >
+                                    one{" "}
+                                </motion.span>
+                                <motion.span
+                                    className="text-cyan-500"
+                                    variants={wordAnim}
+                                >
+                                    warm{" "}
+                                </motion.span>
+                                <motion.span
+                                    className="text-cyan-500"
+                                    variants={wordAnim}
+                                >
+                                    Corner.
+                                </motion.span>
+                            </div>
+                        </motion.p>
+                    </Reveal>
+
+                    <div className="mt-20 grid gap-8 md:grid-cols-3">
+                        {[
+                            {
+                                icon: Coffee,
+                                title: "Slow Coffee",
+                                text: "Single-origin beans, hand-pulled with patience. Every cup, a quiet ceremony.",
+                                img: dish3,
+                            },
+                            {
+                                icon: UtensilsCrossed,
+                                title: "Soulful Kitchen",
+                                text: "Heirloom recipes reimagined — pure veg plates plated like poetry.",
+                                img: dish2,
+                            },
+                            {
+                                icon: Music2,
+                                title: "Live Evenings",
+                                text: "Sitar Sundays & acoustic nights under amber light and clay walls.",
+                                img: g3,
+                            },
+                        ].map((p, i) => (
+                            <Reveal key={p.title} delay={i * 100}>
+                                <article className="group relative overflow-hidden rounded-[32px] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition duration-500 hover:-translate-y-2 hover:shadow-cyan-200/50">
+                                    {/* Image */}
+                                    <div className="relative h-[280px] overflow-hidden">
+                                        <img
+                                            src={p.img}
+                                            alt={p.title}
+                                            loading="lazy"
+                                            className="h-full w-full object-cover transition duration-[1400ms] group-hover:scale-110"
+                                        />
+
+                                        {/* Overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent" />
+
+                                        {/* Icon */}
+                                        <div className="absolute bottom-5 left-5 grid h-14 w-14 place-items-center rounded-full bg-cyan-600 text-white shadow-lg">
+                                            <p.icon className="h-5 w-5" />
+                                        </div>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="p-8">
+                                        <h3 className="font-serif text-[30px] leading-none text-cyan-950">
+                                            {p.title}
+                                        </h3>
+
+                                        <p className="mt-4 text-[17px] leading-8 text-cyan-800/70">
+                                            {p.text}
+                                        </p>
+
+                                        <div className="mt-5 flex justify-center">
+                                            <div className="h-[1px] w-48 rounded-full bg-gradient-to-r from-cyan-100 via-cyan-400 to-cyan-100" />
+                                        </div>
+                                    </div>
+                                </article>
+                            </Reveal>
+                        ))}
                     </div>
                 </section>
 
@@ -525,21 +627,32 @@ export default function Home() {
                     id="menu"
                     className="min-h-screen bg-[#0f0f0f] text-white py-20 px-6"
                 >
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        className="space-y-6 pb-8 border-b border-white/10"
-                    >
-                        <span className="text-[10px] tracking-[0.4em] uppercase text-cyan-500 font-bold border-l border-cyan-500 pl-4">
-                            {currentCategoryName}
-                        </span>
-                        <h2 className="text-6xl md:text-7xl font-serif italic tracking-tighter">
-                            Chef's{" "}
-                            <span className="text-stone-500 italic">
-                                Signature
+                    <div className="flex justify-between pb-8 border-b border-white/20">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            className="space-y-6 "
+                        >
+                            <span className="text-[10px] tracking-[0.4em] uppercase text-cyan-500 font-bold border-l border-cyan-500 pl-4">
+                                {currentCategoryName}
                             </span>
-                        </h2>
-                    </motion.div>
+                            <h2 className="text-6xl md:text-7xl font-serif italic tracking-tighter">
+                                Chef's{" "}
+                                <span className="text-stone-500 italic">
+                                    Signature
+                                </span>
+                            </h2>
+                        </motion.div>
+
+                        <div className="mt-20 text-cyan-400 opacity-100 transition-opacity">
+                            <Link
+                                href={"/cafe-menus"}
+                                className="text-sm uppercase tracking-[0.5em] border-b border-cyan-600 pb-2"
+                            >
+                                View Full Menu
+                            </Link>
+                        </div>
+                    </div>
 
                     <div className="max-w-7xl mt-14 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                         {/* LEFT SIDE: STICKY VISUAL */}
@@ -588,7 +701,7 @@ export default function Home() {
                         {/* RIGHT SIDE: SCROLLABLE CONTENT */}
                         <div className="flex flex-col">
                             {/* Vertical Category Selector */}
-                            <div className="flex gap-6 mb-16 overflow-x-auto pb-4 no-scrollbar border-b border-white/10">
+                            <div className="flex gap-6 mb-10 overflow-x-auto pb-4 no-scrollbar border-b border-white/10">
                                 {categories.map((cat) => (
                                     <button
                                         key={cat.id}
@@ -614,20 +727,20 @@ export default function Home() {
 
                             {/* Elegant List Items */}
                             <div className="space-y-0">
-                                {filteredMenu.map((item) => (
+                                {filteredMenu.map((item, index) => (
                                     <motion.div
                                         key={item.id}
                                         onMouseEnter={() =>
                                             setHoveredImage(item.image_url)
                                         }
-                                        className="group border-b border-white/5 py-8 flex justify-between items-center cursor-crosshair transition-all hover:pl-4"
+                                        className="group border-b border-white/5 pb-8 flex justify-between items-center cursor-crosshair transition-all hover:pl-4"
                                     >
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-4 mb-1">
                                                 <span className="text-[10px] font-mono text-stone-600 group-hover:text-cyan-500 transition-colors">
-                                                    {item.id < 10
-                                                        ? `0${item.id}`
-                                                        : item.id}
+                                                    {index + 1 < 10
+                                                        ? `0${index + 1}`
+                                                        : index + 1}
                                                 </span>
                                                 <h3 className="text-2xl md:text-3xl font-serif group-hover:italic transition-all">
                                                     {item.name}
@@ -648,12 +761,6 @@ export default function Home() {
                                         </div>
                                     </motion.div>
                                 ))}
-                            </div>
-
-                            <div className="mt-20 opacity-50 text-cyan-600 hover:opacity-100 transition-opacity">
-                                <button className="text-xs uppercase tracking-[0.5em] border-b border-cyan-600 pb-2">
-                                    View Full Menu
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -878,6 +985,54 @@ export default function Home() {
                     )}
                 </section>
                 {/* contact us end  */}
+
+                <section
+                    id="booking"
+                    className="relative bg-[#050505] text-white py-32 px-6 overflow-hidden"
+                >
+                    {/* Background Glow */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/10 blur-[120px] rounded-full" />
+
+                    <div className="space-y-6 text-center relative z-10">
+                        <div className="flex justify-center">
+                            <Coffee
+                                className="text-cyan-500"
+                                size={28}
+                                strokeWidth={2}
+                            />
+                        </div>
+
+                        <h2 className="text-3xl md:text-5xl font-serif italic leading-tight">
+                            A table is waiting, with <br /> your name & a warm
+                            cup.
+                        </h2>
+
+                        <p className="text-stone-400  leading-relaxed text-center">
+                            Step into an atmosphere crafted with elegance, warm
+                            conversations, handcrafted brews, <br /> and
+                            unforgettable dining moments curated just for you.
+                        </p>
+                    </div>
+
+                    <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        {/* Reserve Button */}
+                        <Link
+                            href={"/reservations"}
+                            className={`group relative overflow-hidden px-4 py-4 rounded-full bg-cyan-500 text-black text-xs uppercase tracking-[0.3em] font-bold transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(0,255,255,0.45)]`}
+                        >
+                            <span className="relative z-10 ">
+                                Reserve A Table
+                            </span>
+
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                        </Link>
+
+                        {/* Order Online Button */}
+                        <button className="group px-8 py-4 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-xl text-white text-xs uppercase tracking-[0.3em] font-bold transition-all duration-500 hover:border-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300 hover:scale-105">
+                            Order Online
+                        </button>
+                    </div>
+                </section>
             </div>
         </MainLayout>
     );

@@ -93,24 +93,42 @@ export default function Header() {
                 scrolled ? "bg-white shadow-md" : "bg-transparent"
             }`}
         >
-            <div className="max-w-6xl  mx-auto px-6 py-2 flex items-center justify-between">
+            <div className="max-w-7xl  mx-auto px-6 py-2 flex items-center justify-between">
                 {/* -------- Desktop Menu -------- */}
                 <nav className="hidden md:flex items-end space-x-8">
-                    {[
-                        { name: "Home", id: null },
-                        { name: "Menu", id: "#menu" },
-                        { name: "Booking", id: "#booking" },
-                    ].map((item) => (
-                        <button
-                            key={item.name}
-                            onClick={() => handleNavClick(item.id)}
-                            className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
-                                scrolled ? "text-cyan-600" : "text-white"
-                            }`}
-                        >
-                            {item.name}
-                        </button>
-                    ))}
+                    <button
+                        onClick={() => handleNavClick(null)}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        Home
+                    </button>
+                    <Link
+                        href={"/cafe-menus"}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        Menu
+                    </Link>
+
+                    <Link
+                        href={"/reservations"}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        Reserve
+                    </Link>
+                    <Link
+                        href={"/cafe-gallery"}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        Gallery
+                    </Link>
                 </nav>
 
                 {/* -------- Center Logo -------- */}
@@ -135,8 +153,18 @@ export default function Header() {
                             scrolled ? "text-cyan-600" : "text-white"
                         }`}
                     >
-                        Our Story
+                        Our&nbsp;Story
                     </Link>
+
+                    <Link
+                        href={"/reservations"}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        Events
+                    </Link>
+
                     {[
                         { name: "About", id: "#about" },
                         // { name: "Blog", id: "#blog" },

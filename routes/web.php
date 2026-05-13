@@ -30,3 +30,7 @@ Route::get('/cafe-menus', function () {
 })->name('cafe-menus');
 
 Route::get('/cafe-menu/{slug}', [MenuController::class, 'show']);
+
+Route::get('/cafe-events', function () {
+    return Inertia::render('CafeEvents');
+})->name('cafe-events');

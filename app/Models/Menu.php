@@ -19,13 +19,20 @@ class Menu extends Model
         'preparation_time',
         'rating',
         'tags',
-        'signature'
+        'signature',
+        'ingredients',
+        'cooking_style',
+        'calories',
+        'cuisine_type',
+        'spice_level',
+        'short_description'
     ];
 
     protected $casts = [
         'tags' => 'array',
         'is_available' => 'boolean',
         'is_featured' => 'boolean',
+        'ingredients' => 'array',
     ];
 
     protected $appends = ['image_url'];

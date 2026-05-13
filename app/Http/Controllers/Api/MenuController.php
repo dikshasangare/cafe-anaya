@@ -53,9 +53,16 @@ class MenuController extends Controller
             ->take(3)
             ->get();
 
+        $pairing = Menu::where('id', '!=', $menu->id)
+            ->with('category')
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
         return Inertia::render('CafeMenuDetail', [
             'menu' => $menu,
             'related' => $related,
+            'pairing' => $pairing,
         ]);
     }
 }

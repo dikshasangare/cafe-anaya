@@ -2,14 +2,20 @@
 
 namespace App\Filament\Resources\Menus\Schemas;
 
+use App\Services\MenuAiService;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Http;
 
 class MenuForm
 {
@@ -81,6 +87,17 @@ class MenuForm
                             ->required()
                             ->numeric()
                             ->default(0),
+
+                        Textarea::make('short_description'),
+
+                        TagsInput::make('ingredients'),
+
+
+                        TextInput::make('cooking_style'),
+
+                        TextInput::make('calories'),
+                        TextInput::make('cuisine_type'),
+                        TextInput::make('spice_level'),
                     ])
                     ->columns(1), // Stack internal grid items                
             ]);

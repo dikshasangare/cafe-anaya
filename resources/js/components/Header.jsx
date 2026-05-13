@@ -157,7 +157,7 @@ export default function Header() {
                     </Link>
 
                     <Link
-                        href={"/reservations"}
+                        href={"/cafe-events"}
                         className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
                             scrolled ? "text-cyan-600" : "text-white"
                         }`}

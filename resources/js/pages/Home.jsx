@@ -845,6 +845,7 @@ export default function Home() {
                                 <h3 className="text-3xl font-serif mb-4 uppercase tracking-tighter leading-tight">
                                     Follow <br /> the Brew
                                 </h3>
+
                                 <p className="text-stone-400 text-sm mb-8">
                                     Join 12k+ coffee lovers on our journey to
                                     the perfect roast. Get brewing tips, first
@@ -879,7 +880,7 @@ export default function Home() {
                         </div>
 
                         {/* VISIT US CARD */}
-                        <div className="md:col-span-2 relative group overflow-hidden rounded-[2rem] min-h-[450px]">
+                        <div className="md:col-span-2 relative group overflow-hidden rounded-[2rem] min-h-[550px]">
                             <img
                                 src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80"
                                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -1006,6 +1007,14 @@ export default function Home() {
                             A table is waiting, with <br /> your name & a warm
                             cup.
                         </h2>
+
+                        <div className="flex items-center justify-center my-6">
+                            <div className="w-48 h-px bg-gradient-to-r from-transparent via-[#22d3ee]/50 to-transparent" />
+
+                            <div className="mx-3 w-2 h-2 rounded-full bg-[#22d3ee] shadow-[0_0_10px_rgba(34,211,238,0.6)]" />
+
+                            <div className="w-48 h-px bg-gradient-to-l from-transparent via-[#22d3ee]/50 to-transparent" />
+                        </div>
 
                         <p className="text-stone-400  leading-relaxed text-center">
                             Step into an atmosphere crafted with elegance, warm

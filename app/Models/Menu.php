@@ -18,14 +18,14 @@ class Menu extends Model
         'is_featured',
         'preparation_time',
         'rating',
-        'tags',
         'signature',
         'ingredients',
         'cooking_style',
         'calories',
         'cuisine_type',
         'spice_level',
-        'short_description'
+        'short_description',
+        'ai_generated'
     ];
 
     protected $casts = [
@@ -33,6 +33,7 @@ class Menu extends Model
         'is_available' => 'boolean',
         'is_featured' => 'boolean',
         'ingredients' => 'array',
+        'ai_generated' => 'boolean',
     ];
 
     protected $appends = ['image_url'];

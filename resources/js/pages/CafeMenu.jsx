@@ -7,7 +7,7 @@ import { Leaf } from "lucide-react";
 export default function CafeMenu() {
     const [categories, setCategories] = useState([]);
     const [menu, setMenu] = useState([]);
-    const [active, setActive] = useState("All");
+    const [active, setActive] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function CafeMenu() {
                         id: 0,
                         name: "All",
                     },
-                    ...categoryData.categories,
+                    ...(categoryData.categories || []),
                 ]);
 
                 const menuRes = await fetch("/api/menu");
@@ -39,9 +39,7 @@ export default function CafeMenu() {
     }, []);
 
     const items =
-        active === "All"
-            ? menu
-            : menu.filter((m) => m.category?.name === active);
+        active === 0 ? menu : menu.filter((m) => m.category_id === active);
 
     return (
         <MainLayout>
@@ -89,11 +87,23 @@ export default function CafeMenu() {
                     <div className="sticky top-20 z-30 mb-12 overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-xl">
                         <div className="mx-auto flex w-max gap-3">
                             {categories.map((category) => (
+                                // <button
+                                //     key={category.id}
+                                //     onClick={() => setActive(category.name)}
+                                //     className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm transition-all duration-300 ${
+                                //         active === category.name
+                                //             ? "bg-cyan-400 text-black shadow-[0_0_25px_rgba(34,211,238,0.35)]"
+                                //             : "text-stone-300 hover:bg-white/10"
+                                //     }`}
+                                // >
+                                //     {category.name}
+                                // </button>
+
                                 <button
                                     key={category.id}
-                                    onClick={() => setActive(category.name)}
+                                    onClick={() => setActive(category.id)}
                                     className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm transition-all duration-300 ${
-                                        active === category.name
+                                        active === category.id
                                             ? "bg-cyan-400 text-black shadow-[0_0_25px_rgba(34,211,238,0.35)]"
                                             : "text-stone-300 hover:bg-white/10"
                                     }`}

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ChatController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\ReservationController;
@@ -20,3 +21,8 @@ Route::get('/reservations/{id}', [ReservationController::class, 'show']);
 Route::put('/reservations/{id}', [ReservationController::class, 'update']);
 
 Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+
+
+Route::post('/chat', [ChatController::class, 'send'])
+    ->middleware('throttle:20,1') // 20 requests per minute per IP
+    ->name('chat.send');

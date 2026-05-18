@@ -50,6 +50,16 @@ export default function CafeMenuDetail({
         );
     }
 
+    const category = Array.isArray(menu.category)
+        ? menu.category.join(" ").toLowerCase()
+        : String(menu.category || "").toLowerCase();
+
+    const rating = Number(menu.rating || 0);
+
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
     return (
         <MainLayout>
             <Head title="Menu | Café Anaya" />
@@ -129,37 +139,103 @@ export default function CafeMenuDetail({
                                             className="w-full aspect-[4/5] object-cover animate-ken-burns"
                                         />
                                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+                                        <div className="absolute -bottom-6 right-6 lg:right-10 grid place-items-center h-28 w-28 rounded-full bg-[oklch(0.98_0.014_220)] border border-[oklch(0.9_0.025_215)]/60 shadow-warm rotate-[-6deg] animate-float">
+                                            <div className="text-center">
+                                                <p className="text-[9px] uppercase tracking-[0.25em] text-[oklch(0.45_0.04_225)]">
+                                                    {menu.discount_price
+                                                        ? "Offer Price"
+                                                        : "Today"}
+                                                </p>
+
+                                                <div className="mt-1 flex flex-col items-center">
+                                                    {/* Final Price */}
+                                                    <p className="font-serif text-3xl text-[oklch(0.68_0.13_210)] leading-none">
+                                                        ₹
+                                                        {menu.discount_price ||
+                                                            menu.price}
+                                                    </p>
+
+                                                    {/* Actual Price */}
+                                                    {menu.discount_price &&
+                                                        menu.price &&
+                                                        menu.price >
+                                                            menu.discount_price && (
+                                                            <p className="text-[11px] text-[oklch(0.45_0.04_225)] line-through mt-1">
+                                                                ₹{menu.price}
+                                                            </p>
+                                                        )}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {/* Tiny rating row */}
                                     <div className="mt-8 flex items-center gap-3 text-xs text-muted-[oklch(0.22_0.04_235)]">
-                                        <div className="flex items-center gap-0.5 text-[oklch(0.68_0.13_210)]">
-                                            {[
-                                                ...Array(
-                                                    Math.round(
-                                                        menu.rating || 5,
-                                                    ),
-                                                ),
-                                            ].map((_, i) => (
-                                                <Star
-                                                    key={i}
-                                                    className="h-3.5 w-3.5 fill-current"
-                                                />
-                                            ))}
-                                        </div>
+                                        {rating > 0 ? (
+                                            <>
+                                                {/* Rating Stars */}
+                                                <div className="flex items-center gap-1">
+                                                    {/* Full Stars */}
+                                                    {[...Array(fullStars)].map(
+                                                        (_, i) => (
+                                                            <Star
+                                                                key={`full-${i}`}
+                                                                className="h-4 w-4 fill-[oklch(0.68_0.13_210)] text-[oklch(0.68_0.13_210)]"
+                                                            />
+                                                        ),
+                                                    )}
 
-                                        <span className="flex items-center tracking-wider text-sm gap-2">
-                                            <span>{menu.rating || 4.9}</span>
-                                            <span className="w-1 h-1 rounded-full bg-[#22d3ee] shadow-[0_0_6px_rgba(34,211,238,0.6)]"></span>
-                                            <span>loved by</span>
-                                            <span>
-                                                {(
-                                                    1000 +
-                                                    menu.id * 137
-                                                ).toLocaleString()}
-                                                + guests
-                                            </span>
-                                        </span>
+                                                    {/* Half Star */}
+                                                    {hasHalfStar && (
+                                                        <div className="relative h-4 w-4">
+                                                            {/* Background Empty Star */}
+                                                            <Star className="absolute h-4 w-4 text-white/20" />
+
+                                                            {/* Half Filled Star */}
+                                                            <div className="absolute overflow-hidden w-1/2">
+                                                                <Star className="h-4 w-4 fill-[oklch(0.68_0.13_210)] text-[oklch(0.68_0.13_210)]" />
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Empty Stars */}
+                                                    {[...Array(emptyStars)].map(
+                                                        (_, i) => (
+                                                            <Star
+                                                                key={`empty-${i}`}
+                                                                className="h-4 w-4 text-white/20"
+                                                            />
+                                                        ),
+                                                    )}
+                                                </div>
+
+                                                {/* Rating Info */}
+                                                <span className="flex items-center tracking-wider text-sm gap-2">
+                                                    <span>
+                                                        {rating.toFixed(1)}
+                                                    </span>
+
+                                                    <span className="w-1 h-1 rounded-full bg-[#22d3ee] shadow-[0_0_6px_rgba(34,211,238,0.6)]"></span>
+
+                                                    <span>loved by</span>
+
+                                                    <span>
+                                                        {(
+                                                            1000 +
+                                                            menu.id * 137
+                                                        ).toLocaleString()}
+                                                        + guests
+                                                    </span>
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <div className="rounded-full border border-dashed border-white/10 bg-white/[0.03] px-4 py-2 text-sm tracking-wide text-[oklch(0.22_0.04_235)]/70">
+                                                Freshly added to our menu — be
+                                                the first to try and review this
+                                                dish.
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </Reveal>
@@ -203,12 +279,17 @@ export default function CafeMenuDetail({
                                 <div className="flex-1 h-px bg-gradient-to-l from-[#22d3ee]/40 to-transparent"></div>
                             </div>
 
-                            <p className="text-[17px] font-light tracking-widest leading-relaxed text-[#a8a29e] mb-5.5">
-                                "{menu.short_description}"
-                            </p>
-                            <p className="text-[13px] font-light tracking-widest leading-relaxed text-[#a8a29e] mt-3 mb-5">
-                                {menu.description}
-                            </p>
+                            {menu.short_description?.trim() && (
+                                <p className="text-[17px] font-light tracking-widest leading-relaxed text-[#a8a29e] mb-5.5">
+                                    "{menu.short_description}"
+                                </p>
+                            )}
+
+                            {menu.description?.trim() && (
+                                <p className="text-[13px] font-light tracking-widest leading-relaxed text-[#a8a29e] mt-3 mb-5">
+                                    {menu.description}
+                                </p>
+                            )}
 
                             {/* Info Cards - Dynamic */}
                             <div className="grid grid-cols-3 gap-2 mt-8">
@@ -326,44 +407,80 @@ export default function CafeMenuDetail({
 
                             <Reveal
                                 delay={120}
-                                className="lg:col-span-5 shadow-[0_25px_80px_rgba(6,182,212,0.12)]"
+                                className="lg:col-span-5 rounded-[2rem] shadow-[0_25px_80px_rgba(6,182,212,0.12)]"
                             >
-                                <div className="relative rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur p-8 shadow-soft overflow-hidden  ">
+                                <div className="relative rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur p-8 shadow-soft overflow-hidden">
                                     <div className="absolute inset-0 paisley opacity-40 pointer-events-none" />
+
                                     <div className="relative">
                                         <p className="text-[11px] uppercase tracking-[0.35em] text-[oklch(0.68_0.13_210)]">
                                             Inside the plate
                                         </p>
+
                                         <h3 className="mt-2 text-3xl">
                                             Ingredients
                                         </h3>
-                                        <div className="ornament-line my-5" />
-                                        <ul className="space-y-3">
-                                            {menu.ingredients?.map((ing, i) => (
-                                                <li
-                                                    key={ing}
-                                                    className="flex items-start gap-3 text-sm tracking-widest text-[oklch(0.22_0.04_235)]/85"
-                                                >
-                                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[oklch(0.68_0.13_210)] shrink-0" />
-                                                    <span>
-                                                        <span className="text-gray-500/60 mr-2">
-                                                            {String(
-                                                                i + 1,
-                                                            ).padStart(2, "0")}
-                                                        </span>
-                                                        {ing}
-                                                    </span>
-                                                </li>
-                                            ))}
-                                        </ul>
 
-                                        <div className="mt-7 rounded-xl border border-dashed tracking-widest border-[oklch(0.68_0.13_210)]/30 bg-cyan-500/10 p-4 text-sm text-[oklch(0.22_0.04_235)]/70">
+                                        <div className="ornament-line my-5" />
+
+                                        {/* Ingredients */}
+                                        {menu.ingredients?.length > 0 ? (
+                                            <ul className="space-y-3">
+                                                {menu.ingredients.map(
+                                                    (ing, i) => (
+                                                        <li
+                                                            key={i}
+                                                            className="flex items-start gap-3 text-sm tracking-widest text-[oklch(0.22_0.04_235)]/85"
+                                                        >
+                                                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[oklch(0.68_0.13_210)] shrink-0" />
+
+                                                            <span>
+                                                                <span className="text-gray-500/60 mr-2">
+                                                                    {String(
+                                                                        i + 1,
+                                                                    ).padStart(
+                                                                        2,
+                                                                        "0",
+                                                                    )}
+                                                                </span>
+
+                                                                {ing}
+                                                            </span>
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        ) : (
+                                            <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-5 text-sm tracking-wide leading-relaxed text-[oklch(0.22_0.04_235)]/65">
+                                                Every dish is freshly crafted by
+                                                our chefs using premium
+                                                ingredients, aromatic spices,
+                                                and balanced flavors to create a
+                                                memorable dining experience.
+                                            </div>
+                                        )}
+
+                                        {/* Dish Note */}
+                                        <div className="mt-7 rounded-xl border border-dashed tracking-widest border-[oklch(0.68_0.13_210)]/30 bg-cyan-500/10 p-4 text-sm leading-relaxed text-[oklch(0.22_0.04_235)]/70">
                                             <span className="italic text-[oklch(0.68_0.13_210)]">
-                                                Allergens:{" "}
+                                                Chef’s Note:{" "}
                                             </span>
-                                            Contains dairy. May contain traces
-                                            of nuts. Please inform our team of
-                                            any dietary needs.
+
+                                            {category.includes("dessert")
+                                                ? "Prepared with rich premium ingredients and handcrafted sweetness for a delightful finish to your meal."
+                                                : category.includes("beverage")
+                                                  ? "Freshly prepared and best enjoyed chilled or hot depending on the serving style."
+                                                  : category.includes("starter")
+                                                    ? "A flavorful beginning crafted to awaken your appetite with balanced textures and spices."
+                                                    : category.includes("spicy")
+                                                      ? "This dish may contain bold spices and aromatic seasonings for a rich flavor experience."
+                                                      : category.includes("veg")
+                                                        ? "Made with fresh farm-picked vegetables and carefully selected ingredients for wholesome flavor."
+                                                        : category.includes(
+                                                                "non veg",
+                                                            )
+                                                          ? "Prepared with premium quality ingredients and signature seasonings for deep authentic taste."
+                                                          : "Our kitchen prepares every dish with fresh ingredients and carefully balanced flavors. Please inform our team about any dietary preferences or allergies before ordering."}
                                         </div>
                                     </div>
                                 </div>
@@ -416,8 +533,24 @@ export default function CafeMenuDetail({
                                             <span className="text-xl text-[#d6d3d1]">
                                                 {rpairingData.name}
                                             </span>
-                                            <span className="text-sm text-[#22d3ee]">
-                                                ₹{rpairingData.price}
+                                            <span className="flex items-center gap-2">
+                                                {/* Final Price */}
+                                                <span className="text-sm font-semibold text-[#22d3ee]">
+                                                    ₹
+                                                    {rpairingData.discount_price ||
+                                                        rpairingData.price}
+                                                </span>
+
+                                                {/* Original Price */}
+                                                {rpairingData.discount_price &&
+                                                    rpairingData.price &&
+                                                    rpairingData.price >
+                                                        rpairingData.discount_price && (
+                                                        <span className="text-xs text-gray-400 line-through">
+                                                            ₹
+                                                            {rpairingData.price}
+                                                        </span>
+                                                    )}
                                             </span>
                                         </div>
                                     </div>
@@ -463,8 +596,23 @@ export default function CafeMenuDetail({
                                             <span className="text-sm tracking-widest capitalize text-[#d6d3d1]">
                                                 {r.name}
                                             </span>
-                                            <span className="text-sm text-[#22d3ee]">
-                                                ₹{r.price}
+                                            <span className="flex items-center gap-2">
+                                                {/* Final Price */}
+                                                <span className="text-sm font-semibold text-[#22d3ee]">
+                                                    ₹
+                                                    {r.discount_price ||
+                                                        r.price}
+                                                </span>
+
+                                                {/* Original Price */}
+                                                {r.discount_price &&
+                                                    r.price &&
+                                                    r.price >
+                                                        r.discount_price && (
+                                                        <span className="text-xs text-gray-400 line-through">
+                                                            ₹{r.price}
+                                                        </span>
+                                                    )}
                                             </span>
                                         </div>
                                     </div>

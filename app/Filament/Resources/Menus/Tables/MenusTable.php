@@ -24,7 +24,7 @@ class MenusTable
                     ->money()
                     ->sortable(),
                 TextColumn::make('discount_price')
-                    ->money()
+                    ->money('INR')
                     ->sortable(),
                 ImageColumn::make('image'),
                 TextColumn::make('category.name') 

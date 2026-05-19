@@ -12,6 +12,14 @@ import {
 } from "framer-motion";
 import MainLayout from "../Layouts/MainLayout";
 
+import storybreakfast from "../../images/story-breakfast.jpg";
+import storydish from "../../images/story-dish.jpg";
+import storygathering from "../../images/story-gathering.jpg";
+import storyhero from "../../images/story-hero.jpg";
+import storyinterior from "../../images/story-interior.jpg";
+
+
+
 /* ===== REALISTIC STEAM ===== */
 function Steam() {
     return (
@@ -189,7 +197,7 @@ export default function OurStoryPage() {
                     {/* ================= HERO IMAGE ================= */}
                     <div className="h-[280px] md:h-[600px] overflow-hidden relative">
                         <motion.img
-                            src="https://images.unsplash.com/photo-1612192527395-06b72da6b35a?w=1600"
+                            src={storyhero}
                             alt=""
                             style={{
                                 x: x1,
@@ -243,7 +251,7 @@ export default function OurStoryPage() {
                             {/* ✅ IMAGE 2 (VERTICAL TOP → BOTTOM) */}
                             <div className="h-[180px] md:h-[600px] overflow-hidden relative">
                                 <motion.img
-                                    src="https://images.unsplash.com/photo-1671522635398-a2443699d32e?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGNhZmUlMjBmb29kfGVufDB8fDB8fHww"
+                                    src={storydish}
                                     alt=""
                                     style={{
                                         y: y2,
@@ -283,7 +291,7 @@ export default function OurStoryPage() {
                         {/* ================= IMAGE 3 (HORIZONTAL REVERSE) ================= */}
                         <div className="h-[180px] md:h-[400px] overflow-hidden relative">
                             <motion.img
-                                src="https://plus.unsplash.com/premium_photo-1679503585289-c02467981894?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjl8fGNhZmUlMjBmb29kfGVufDB8fDB8fHww"
+                                src={storyinterior}
                                 alt=""
                                 style={{
                                     x: x2,
@@ -300,7 +308,7 @@ export default function OurStoryPage() {
                         {/* ================= IMAGE 4 ================= */}
                         <div className="h-[180px] md:h-[400px] overflow-hidden relative">
                             <motion.img
-                                src="https://images.unsplash.com/photo-1683533678036-46ec6a0163d9?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fGluZGlhbiUyMGJyZWFrZmFzdHxlbnwwfHwwfHx8MA%3D%3D"
+                                src={storybreakfast}
                                 alt=""
                                 style={{
                                     x: x1,
@@ -315,7 +323,7 @@ export default function OurStoryPage() {
                             {/* ✅ LAST IMAGE (VERTICAL REVERSE) */}
                             <div className="h-[180px] md:h-[600px] overflow-hidden relative">
                                 <motion.img
-                                    src="https://images.unsplash.com/photo-1583527825770-8bd0bfb1f1c1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjZ8fGNhZmUlMjBmb29kfGVufDB8fDB8fHww"
+                                    src={storygathering}
                                     alt=""
                                     style={{
                                         y: yReverse,

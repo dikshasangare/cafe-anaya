@@ -14,5 +14,14 @@ class Reservation extends Model
         'phone',
         'notes',
         'status',
+        'party_size',
+        'special_requests',
+        'original_request',  // add
+        'ai_extracted',      // add
+    ];
+
+    protected $casts = [
+        'ai_extracted' => 'boolean',
+        'date'         => 'date',
     ];
 }

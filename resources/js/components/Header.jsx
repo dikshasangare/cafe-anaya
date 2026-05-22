@@ -93,9 +93,9 @@ export default function Header() {
                 scrolled ? "bg-white shadow-md" : "bg-transparent"
             }`}
         >
-            <div className="max-w-7xl  mx-auto px-6 py-2 flex items-center justify-between">
+            <div className="max-w-full  mx-auto px-6 py-2 flex items-center justify-between">
                 {/* -------- Desktop Menu -------- */}
-                <nav className="hidden md:flex items-end space-x-8">
+                <nav className="hidden md:flex items-end space-x-8 capitalize">
                     <button
                         onClick={() => handleNavClick(null)}
                         className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
@@ -146,7 +146,7 @@ export default function Header() {
                 </button>
 
                 {/* -------- Right Menu -------- */}
-                <nav className="hidden md:flex items-start space-x-8">
+                <nav className="hidden md:flex items-start space-x-8 capitalize">
                     <Link
                         href={"/our-story"}
                         className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
@@ -162,24 +162,26 @@ export default function Header() {
                             scrolled ? "text-cyan-600" : "text-white"
                         }`}
                     >
-                        Events
+                        events
                     </Link>
 
-                    {[
-                        { name: "About", id: "#about" },
-                        // { name: "Blog", id: "#blog" },
-                        { name: "Contact", id: "#contact" },
-                    ].map((item) => (
-                        <button
-                            key={item.name}
-                            onClick={() => handleNavClick(item.id)}
-                            className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
-                                scrolled ? "text-cyan-600" : "text-white"
-                            }`}
-                        >
-                            {item.name}
-                        </button>
-                    ))}
+                    <button
+                        onClick={() => handleNavClick("#about")}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        about
+                    </button>
+
+                    <button
+                        onClick={() => handleNavClick("#contact")}
+                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                            scrolled ? "text-cyan-600" : "text-white"
+                        }`}
+                    >
+                        contact
+                    </button>
                 </nav>
 
                 {/* -------- Mobile Button -------- */}
@@ -195,22 +197,76 @@ export default function Header() {
 
             {/* -------- Mobile Menu -------- */}
             {menuOpen && (
-                <div className="md:hidden bg-white shadow-lg transition-all duration-300 text-gray-800">
-                    <nav className="flex flex-col space-y-3 py-4 px-6">
-                        {[
-                            { name: "Home", id: null },
-                            { name: "About", id: "#about" },
-                            { name: "Menu", id: "#menu" },
-                            { name: "Contact", id: "#contact" },
-                        ].map((item) => (
-                            <button
-                                key={item.name}
-                                onClick={() => handleNavClick(item.id)}
-                                className="text-left text-lg font-semibold py-2 border-b border-gray-200 hover:text-red-600"
-                            >
-                                {item.name}
-                            </button>
-                        ))}
+                <div className="md:hidden bg-white shadow-lg transition-all duration-300 text-gray-800 border-t border-cyan-100">
+                    <nav className="flex flex-col space-y-2  py-2 px-6">
+                        <button
+                            onClick={() => handleNavClick(null)}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            Home
+                        </button>
+                        <Link
+                            href={"/cafe-menus"}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            menu
+                        </Link>
+
+                        <Link
+                            href={"/reservations"}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            reserve
+                        </Link>
+                        <Link
+                            href={"/cafe-gallery"}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            gallery
+                        </Link>
+                        <Link
+                            href={"/our-story"}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            our&nbsp;story
+                        </Link>
+
+                        <Link
+                            href={"/cafe-events"}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            events
+                        </Link>
+
+                        <button
+                            onClick={() => handleNavClick("#about")}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            about
+                        </button>
+
+                        <button
+                            onClick={() => handleNavClick("#contact")}
+                            className={`transition-colors duration-300 hover:text-white hover:bg-cyan-800 text-left text-sm tracking-widest font-semibold capitalize py-2 border-b border-gray-200 ${
+                                scrolled ? "text-cyan-600" : "text-white"
+                            }`}
+                        >
+                            contact
+                        </button>
                     </nav>
                 </div>
             )}

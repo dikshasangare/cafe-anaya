@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reservations', function (Blueprint $table) {
+            $table->string('special_requests')->nullable();
             $table->text('original_request')->nullable()->after('special_requests');
             $table->boolean('ai_extracted')->default(false)->after('original_request');
         });
@@ -23,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('reservations', function (Blueprint $table) {
-            $table->dropColumn(['original_request', 'ai_extracted']);
+            $table->dropColumn(['special_requests', 'original_request', 'ai_extracted']);
         });
     }
 };

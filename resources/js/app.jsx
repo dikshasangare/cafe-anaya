@@ -1,18 +1,30 @@
-import './bootstrap';
-import '../css/app.css';
+import "./bootstrap";
+import "../css/app.css";
 
-import { createRoot } from 'react-dom/client';
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createRoot } from "react-dom/client";
+import { createInertiaApp } from "@inertiajs/react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
+
+import { TranslationProvider } from "./context/TranslationContext";
 
 createInertiaApp({
-    // This looks for your pages in resources/js/Pages/
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob("./Pages/**/*.jsx"),
+        ),
+
     setup({ el, App, props }) {
         const root = createRoot(el);
-        root.render(<App {...props} />);
+
+        root.render(
+            <TranslationProvider>
+                <App {...props} />
+            </TranslationProvider>,
+        );
     },
+
     progress: {
-        color: '#22d3ee', // Cyan color for the luxury loading bar
+        color: "#22d3ee",
     },
 });

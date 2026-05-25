@@ -167,7 +167,7 @@ export default function Header() {
 
                     <button
                         onClick={() => handleNavClick("#about")}
-                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                        className={`font-normal text-2xl capitalize transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
                             scrolled ? "text-cyan-600" : "text-white"
                         }`}
                     >
@@ -176,7 +176,7 @@ export default function Header() {
 
                     <button
                         onClick={() => handleNavClick("#contact")}
-                        className={`font-normal text-2xl transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
+                        className={`font-normal text-2xl capitalize transition-colors duration-300 hover:text-white hover:bg-cyan-800 p-3 ${
                             scrolled ? "text-cyan-600" : "text-white"
                         }`}
                     >

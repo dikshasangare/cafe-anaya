@@ -120,8 +120,6 @@ export default function Home() {
         fetch("http://cafe-anaya.test/api/home-categories")
             .then((res) => res.json())
             .then((data) => {
-                console.log("Category Response:", data);
-
                 const categoryData = data.categories || [];
 
                 if (categoryData.length > 0) {
@@ -136,8 +134,6 @@ export default function Home() {
     useEffect(() => {
         if (!activeTab) return;
 
-        console.log("Fetching menu for Category ID:", activeTab);
-
         setLoading(true);
 
         fetch(`http://cafe-anaya.test/api/menu?category_id=${activeTab}`)
@@ -149,8 +145,6 @@ export default function Home() {
                 return res.json();
             })
             .then((data) => {
-                console.log("Menu Response:", data);
-
                 const menuData = data.menus || [];
 
                 setMenu(menuData);
@@ -162,7 +156,6 @@ export default function Home() {
                 setLoading(false);
             })
             .catch((err) => {
-                console.error("Fetch error:", err);
                 setLoading(false);
             });
     }, [activeTab]);
@@ -238,11 +231,11 @@ export default function Home() {
                             >
                                 <motion.span
                                     variants={wordAnim}
-                                    className="absolute text-cyan-600 font-bold tracking-[0.2em] text-xs uppercase"
+                                    className="absolute text-cyan-600 font-bold tracking-[0.2em] text-xs uppercase bottom-14"
                                 >
                                     Since 2014
                                 </motion.span>
-                                <div className="mt-5">
+                                <span className="mt-5">
                                     <motion.span variants={wordAnim}>
                                         About{" "}
                                     </motion.span>
@@ -261,7 +254,7 @@ export default function Home() {
                                     >
                                         Anaya
                                     </motion.span>
-                                </div>
+                                </span>
 
                                 {/* underline */}
                                 <motion.span
@@ -358,7 +351,7 @@ export default function Home() {
                 {/* CRAFTED TRIO — pillars */}
                 <section className="relative mx-auto max-w-full px-6 py-24 lg:px-10 bg-cyan-50">
                     <Reveal className="text-center">
-                        <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center justify-center gap-4 mb-5">
                             <div className="h-[1px] w-16 bg-cyan-300" />
 
                             <p className="text-xs uppercase tracking-[0.3em] text-cyan-600">
@@ -382,7 +375,7 @@ export default function Home() {
                                 },
                             }}
                         >
-                            <div className="mt-5">
+                            <span className="">
                                 <motion.span variants={wordAnim}>
                                     Three{" "}
                                 </motion.span>
@@ -407,7 +400,7 @@ export default function Home() {
                                 >
                                     Corner.
                                 </motion.span>
-                            </div>
+                            </span>
                         </motion.p>
                     </Reveal>
 
@@ -471,16 +464,6 @@ export default function Home() {
                         ))}
                     </div>
                 </section>
-
-                {/* <section class="md:flex my-10 items-center justify-center h-[500px] md:h-[500px] lg:h-full xl:h-full bg-fixed bg-center md:bg-center lg:bg-center bg-cover md:bg-cover lg:bg-cover bg-black/25 bg-blend-overlay bg-[url('https://images.unsplash.com/photo-1615557509870-98972c5e1396?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1374')]">
-                    <div class="min-h-full h-[600px] md:min-h-screen lg:min-h-screen md:h-[800px] lg:h-full xl:h-full max-w-full md:max-w-6xl lg:max-w-6xl mx-auto flex flex-col justify-center items-center text-center text-white p-2 md:p-6 lg:p-6">
-                        <div>
-                            <h1 class="text-xl sm:text-xl md:text-4xl lg:text-4xl xl:text-4xl text-center font-bold pb-2 sm:pb-2 md:pb-5 lg:pb-5 xl:pb-5 text-white tracking-widest">
-                                What Our Customers Are Saying!
-                            </h1>
-                        </div>
-                    </div>
-                </section> */}
 
                 {/* why choose us */}
                 <section className="relative w-full mb-20">
@@ -578,7 +561,6 @@ export default function Home() {
                                             : { scaleX: 0 }
                                     }
                                     transition={{ duration: 1, delay: 0.8 }}
-                                    originX={1}
                                 />
                             </motion.p>
 
@@ -607,13 +589,13 @@ export default function Home() {
                             </p>
                             <a
                                 href="#_"
-                                class="relative inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-cyan-500 rounded-xl group"
+                                className="relative inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-cyan-500 rounded-xl group"
                             >
-                                <span class="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-cyan-700 rounded group-hover:-mr-4 group-hover:-mt-4">
-                                    <span class="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                                <span className="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-cyan-700 rounded group-hover:-mr-4 group-hover:-mt-4">
+                                    <span className="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
                                 </span>
-                                <span class="absolute bottom-0 left-0 w-full h-full transition-all duration-500 ease-in-out delay-200 -translate-x-full translate-y-full bg-cyan-600 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
-                                <span class="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white">
+                                <span className="absolute bottom-0 left-0 w-full h-full transition-all duration-500 ease-in-out delay-200 -translate-x-full translate-y-full bg-cyan-600 rounded-2xl group-hover:mb-12 group-hover:translate-x-0"></span>
+                                <span className="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white">
                                     Read More About Us
                                 </span>
                             </a>

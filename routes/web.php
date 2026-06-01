@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\RecommendationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -34,3 +35,5 @@ Route::get('/cafe-menu/{slug}', [MenuController::class, 'show']);
 Route::get('/cafe-events', function () {
     return Inertia::render('CafeEvents');
 })->name('cafe-events');
+
+Route::get('/api/recommendations', [RecommendationController::class, 'index'])->middleware('throttle:10,1')->name('recommendations.index');

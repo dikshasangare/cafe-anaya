@@ -32,6 +32,7 @@ import g3 from "../../images/gallery-3.jpg";
 import dish3 from "../../images/dish-3.jpg";
 import dish2 from "../../images/dish-2.jpg";
 import { Reveal } from "../components/Reveal";
+import RecommendedDishes from "../components/RecommendedDishes";
 
 export default function Home() {
     // --- 1. STATE MANAGEMENT ---
@@ -346,8 +347,6 @@ export default function Home() {
                 </section>
                 {/* about us end */}
 
-                {/* THE PHILOSOPHY OF ELEMENTS */}
-
                 {/* CRAFTED TRIO — pillars */}
                 <section className="relative mx-auto max-w-full px-6 py-24 lg:px-10 bg-cyan-50">
                     <Reveal className="text-center">
@@ -604,6 +603,8 @@ export default function Home() {
                 </section>
                 {/* why choose us end */}
 
+                {/* <RecommendedDishes /> */}
+                <RecommendedDishes />
                 {/* menu */}
                 <section
                     id="menu"

@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class Menu extends Model
 {
+    use HasTranslations;
+    
+    // public array $translatable = ['name', 'description', 'short_description'];
+
     protected $fillable = [
         'name',
         'slug',
